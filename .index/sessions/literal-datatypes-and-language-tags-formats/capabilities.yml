@@ -1,0 +1,5 @@
+- "distinguish-term-equality-from-value-equality"
+- "predict-literal-collapse-in-graph"
+- "write-typed-and-language-tagged-literals"
+- "detect-tool-literal-normalization"
+- "diagnose-round-trip-blind-spot"

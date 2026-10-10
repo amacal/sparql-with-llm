@@ -1,0 +1,55 @@
+date: "2026-10-10"
+title: "Literal Datatypes and Language Tags (formats)"
+session:
+  file: formats/rdf-literal-datatypes/
+  status: completed
+  attempted:
+    - "Hand-write an N-Triples dataset of literal pairs that share subject and predicate and differ only in literal spelling (simple vs explicit xsd:string, canonical vs non-canonical xsd:integer, language tag case), plus an ill-typed literal; predict the triple count under RDF 1.1 term equality, parse and re-serialize, and verify the round-trip"
+    - "Run the deferred literal-in-subject-position parse case from the previous session"
+  explored:
+    - "Literal parts: lexical form, datatype IRI, language tag only for rdf:langString (RDF 1.1 Concepts §3.3, fetched live)"
+    - "Lexical-to-value mapping and lexical space of xsd:integer (XSD 1.1 Part 2 §3.4.13.1) and its canonical representation (§3.4.13.2), fetched live"
+    - "Literal term equality versus value equality (§3.3 definition, fetched live)"
+    - "Simple literals as syntactic sugar for xsd:string; N-Triples production [6] allowing ^^ or a language tag, never both (fetched live)"
+    - "Language tag purpose (labels in several languages, BCP47 shape per production [144s]) and the §3.3 MAY-lowercase rule"
+    - "Ill-typed literals: MUST be accepted; grammar layer versus datatype/meaning layer, with unrecognized datatype IRIs as the motivating case"
+    - "rdflib.term docs on NORMALIZE_LITERALS (fetched live) and rdflib's internal datatype of a simple literal"
+    - "Whether isomorphic() can detect a change both parses normalize identically"
+  tried:
+    - "Dataset v1 (triples.nt): predicate IRI ending in a stray double quote with no closing angle bracket, pairs on different subjects/predicates, real personal data"
+    - "Dataset v2 (renamed literals.nt): closing angle bracket added but the stray double quote kept"
+    - "Dataset v3: IRI fixed, personal data replaced with made-up resources, pairs 3/4 and 5/6 sharing subject and predicate; pair 1/2 still on different predicates with different lexical forms"
+    - "Dataset v4: pair 1/2 made to share subject and predicate and differ only in simple versus explicit xsd:string"
+    - "Default rdfpipe parse/serialize, a re-parse with NORMALIZE_LITERALS = False, isomorphic() with normalization on and off, and a sorted line diff"
+    - "subjects.nt: one valid line plus one line with a literal subject, run through rdfpipe"
+  corrections:
+    - "Described a literal as needing to be quoted; corrected to: quotes are N-Triples syntax, the lexical form excludes them"
+    - "Called the lexical form the 'object' and the 'value'; corrected to: object is a triple position, value is produced by the datatype's lexical-to-value mapping from the lexical form"
+    - "Attributed the value to parsing ('same value when parsed'); corrected to: a parser yields lexical form and datatype IRI, the datatype's mapping yields the value"
+    - "Gave the datatype of \"chat\"@fr as xsd:langString; corrected to rdf:langString (http://www.w3.org/1999/02/22-rdf-syntax-ns#langString)"
+    - "Stated an ill-typed literal must be rejected; corrected per §3.3 to: implementations must accept it, it only lacks a value"
+    - "Initially predicted the ill-typed line contributes 0 triples; corrected to 1 before running"
+    - "Listed 0 as a possible outcome for the @pl/@PL pair; corrected to 1 (lowercased) or 2 (kept as written)"
+    - "Predicted 'Learner' and 'Learner'^^xsd:string collapse to 1 triple (spec-correct); observed 2 in rdflib, diagnosed as rdflib storing a simple literal with datatype None"
+    - "Predicted the output would keep \"002\"^^xsd:integer; observed it rewritten to \"2\" and merged with line 3, diagnosed as rdflib's default literal normalization at construction time"
+    - "Predicted total of 5 triples matched the observed 5 only because the two errors above cancelled"
+    - "Predicted isomorphic() would return False under default settings; observed True, diagnosed as both graphs being normalized identically at parse time"
+    - "Called the surviving \"2\" the shorter form; corrected to the canonical form for xsd:integer"
+  bugs_found:
+    - "Dataset predicate IRI contained a stray double quote (excluded by IRIREF); fixed by the user"
+    - "Dataset pairs did not share subject and predicate, so they could not test term equality; reworked by the user"
+    - "Dataset initially contained personal data; replaced by the user with made-up resources"
+  completed:
+    - "Wrote formats/rdf-literal-datatypes/literals.nt: 7 lines in 3 pairs plus one ill-typed literal, each pair differing only in the literal"
+    - "Wrote formats/rdf-literal-datatypes/subjects.nt: one valid line plus one literal-subject line"
+    - "Default rdfpipe run: 5 triples (simple/xsd:string pair kept as 2, 2/002 collapsed to \"2\", @pl/@PL collapsed to @pl, ill-typed kept)"
+    - "NORMALIZE_LITERALS = False run: 6 triples, \"002\" preserved, tags still lowercased, conversion failure logged for \"secret\" with the triple kept"
+    - "Round-trip check: isomorphic() True with normalization on (5 vs 5), False with it off (6 vs 5); sorted diff showed the \"002\" and @PL lines lost"
+    - "subjects.nt rejected with ParserError 'Invalid line', exit 1, empty stdout; prediction of rejection matched"
+    - "Answered the observable-behavior and internal-mechanism sign-off; design-rationale sign-off answered in part (benefit and cost of default normalization, term equality deciding triple identity)"
+  not_completed: —
+  open_questions: —
+  notes:
+    - "Tool: rdflib 7.6.0 (rdfpipe plus a Claude-owned helper script in .tmp/) in a disposable python:3.12-slim container rdf-literal-datatypes-tool; re-checked live and chosen as the mainstream maintained Python RDF toolkit whose documented NORMALIZE_LITERALS switch allows a spec-versus-tool contrast; pyoxigraph considered but its docs did not document normalization"
+    - "Format: N-Triples only; RDF 1.1 Concepts treated as normative since RDF 1.2 Concepts was still a Candidate Recommendation at a live check"
+    - "Completes the literal-in-subject-position item left in the previous session's not_completed"

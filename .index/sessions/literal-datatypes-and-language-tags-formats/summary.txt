@@ -1,0 +1,1 @@
+Hand-wrote N-Triples literal pairs differing only in literal spelling, predicted triple counts under RDF 1.1 term equality, and found rdflib 7.6.0 keeps simple versus xsd:string literals distinct and normalizes "002"^^xsd:integer to "2" by default, which isomorphic() cannot detect when both sides are normalized

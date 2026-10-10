@@ -1,0 +1,7 @@
+<http://example.com/people/Learner> <http://example.com/relationship/named> "Learner" .
+<http://example.com/people/Learner> <http://example.com/relationship/named> "Learner"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://example.com/People/Learner> <http://example.com/relationship/aged> "2"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://example.com/People/Learner> <http://example.com/relationship/aged> "002"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://example.com/people/Learner> <http://example.com/relationship/pronounced> "Learner"@pl .
+<http://example.com/people/Learner> <http://example.com/relationship/pronounced> "Learner"@PL .
+<http://example.com/people/Learner> <http://example.com/relationship/aged> "secret"^^<http://www.w3.org/2001/XMLSchema#integer> .

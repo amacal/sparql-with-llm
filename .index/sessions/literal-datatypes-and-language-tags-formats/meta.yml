@@ -1,0 +1,6 @@
+title: "Literal Datatypes and Language Tags (formats)"
+kind: implementation
+status: demonstrated
+target: formats
+file: formats/rdf-literal-datatypes/
+date: "2026-10-10"
