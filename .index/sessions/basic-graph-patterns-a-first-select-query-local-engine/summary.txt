@@ -1,0 +1,1 @@
+Hand-wrote a 7-line N-Triples dataset and full-IRI SELECT queries against Oxigraph 0.5.11, verified one-variable, two-variable and shared-variable join results by hand, traced the Lateral join plan, and observed that "002"^^xsd:integer was canonicalized to "2" on load and still matched as a query constant

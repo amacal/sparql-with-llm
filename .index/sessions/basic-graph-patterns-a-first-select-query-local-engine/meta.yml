@@ -1,0 +1,6 @@
+title: "Basic Graph Patterns: A First SELECT Query (local-engine)"
+kind: implementation
+status: demonstrated
+target: local-engine
+file: local-engine/bgp-first-select/
+date: "2026-10-10"

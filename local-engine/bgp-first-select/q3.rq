@@ -1,0 +1,6 @@
+select ?person ?technology
+where
+{
+    ?person <http://example.com/relationship/worksAt> ?employer .
+    ?employer <http://example.com/relationship/develops> ?technology .
+}

@@ -1,0 +1,5 @@
+select ?person
+where
+{
+    ?person <http://example.com/relationship/aged> 2 .
+}

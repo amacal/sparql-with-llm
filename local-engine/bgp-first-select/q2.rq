@@ -1,0 +1,5 @@
+select ?person ?name
+where
+{
+    ?person <http://example.com/relationship/worksAt> ?name .
+}

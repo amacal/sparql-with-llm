@@ -1,0 +1,6 @@
+- "write-select-query-by-hand"
+- "predict-bgp-solutions-from-data"
+- "verify-results-as-multiset"
+- "read-sparql-json-results"
+- "trace-join-query-plan"
+- "detect-engine-literal-normalization"

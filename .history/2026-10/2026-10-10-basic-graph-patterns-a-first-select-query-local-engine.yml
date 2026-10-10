@@ -1,0 +1,66 @@
+date: "2026-10-10"
+title: "Basic Graph Patterns: A First SELECT Query (local-engine)"
+session:
+  file: local-engine/bgp-first-select/
+  status: completed
+  attempted:
+    - "Hand-write a small N-Triples dataset (shared predicate, a two-hop chain, a blank node in subject and object position, a \"2\"/\"002\" xsd:integer pair), load it into a local SPARQL engine, and write first SELECT queries with full IRIs: one variable, two variables, a two-pattern join, and three spellings of an integer literal constant"
+  explored:
+    - "A question as a triple with an unknown position; variable, triple pattern, basic graph pattern, solution mapping and bound (SPARQL 1.1 §2.1, §18.1.8, fetched live)"
+    - "Matching rule for constant versus variable positions, reusing IRI and literal term equality from the two prior sessions"
+    - "Keyword case-insensitivity (§19.8, fetched live); IRIs case-sensitive"
+    - "Query runs against the endpoint's default graph, not a named file"
+    - "SelectClause grammar rule [9] and TriplesBlock rule [55] (trailing '.' optional), fetched live"
+    - "SPARQL JSON results envelope: head.vars, results.bindings, type/value per term"
+    - "Blank node labels in results (§2.4, fetched live): scoped to a result set; same label within a result set means same node"
+    - "No ORDER BY means unordered solution sequence; comparison as multiset"
+    - "Shared-variable join (§2.2 example, fetched live) and the inner-join analogy"
+    - "Oxigraph query plan (--explain --stats) for Q3: Project over Lateral over two QuadPattern nodes, 3 and 2 results"
+    - "Projection applied after the join; selecting ?employer would not change the row count"
+    - "Bare integer 2 as shorthand for \"2\"^^xsd:integer (§2.3.2, fetched live); §2.3.3 lexical-form-and-datatype matching"
+    - "Store contents via GET /store?default compared against the source file"
+    - "Blank node scope per load, from an accidental double load"
+    - "Single-BGP join versus two separate queries joined client-side, given §2.4 result-set label scope"
+  tried:
+    - "data.nt v1: line 4 had four terms (copy/paste); rejected on load"
+    - "data.nt v2: line 4 fixed; loaded with HTTP 204"
+    - "q2.rq with a comma between SELECT variables; rejected, then fixed"
+    - "q3.rq projecting ?employer instead of ?person, then with ?technology missing its '?', then fixed"
+    - "q4a.rq/q4b.rq using an undeclared xsd: prefix and projecting an unused ?age; prefix replaced with the full datatype IRI and ?age removed before running"
+    - "Explain run in a separate container using a named volume and docker cp (the image has no shell)"
+  corrections:
+    - "Named the predicate position 'relationship' and then 'action'; given the term predicate"
+    - "Stated the object of alice's name 'must be' a literal of xsd:string; restated as expected in this graph but not required, since an object may be an IRI, literal or blank node"
+    - "Predicted one answer (_:n1) for a pattern with two matching triples; corrected to two solutions (\"Alice\" and _:n1)"
+    - "Described a solution as a tuple and a variable as a position; restated per §18.1.8 as a mapping from variables to terms"
+    - "Predicted Q1 would bind HashiCorp (from memory rather than the file); observed Tentris"
+    - "Predicted the Q2 blank node would carry the label Employee1; observed ec9d32f6a7cf1995ed6abda42259de1, diagnosed as blank node labels being scoped to each load/parse of the source and to the result set"
+    - "Stated the join condition as 'triples exist on both sides'; restated as the shared variable being bound to the same term in both patterns"
+    - "Stated a bare integer constant 'may not compile' and would be a type mismatch; corrected per §2.3.2 to shorthand for \"2\"^^xsd:integer"
+    - "Predicted Oxigraph stores two aged triples, with Q4a matching line 6, Q4b line 7 and Q4c line 6; observed one stored triple \"2\" (\"002\" canonicalized on load) and all three queries matching it, including Q4b"
+    - "Stated blank node scope as 'blank <> blank' and then per file; restated as each load/parse being the scope"
+  bugs_found:
+    - "data.nt line 4 contained four terms; Oxigraph rejected the load with 'Parser error at line 4 between columns 97 and 133: Quads must be followed by a dot'; fixed by the user"
+    - "q2.rq SELECT list contained a comma; Oxigraph returned 'Error at 1:20: expected WHERE'; fixed by the user"
+    - "q3.rq projected ?employer instead of ?person and then lacked '?' on technology; both found by reading the file before running and fixed by the user"
+    - "q4a.rq/q4b.rq used the undeclared prefix xsd:; found by reading the file before running and fixed by the user"
+    - "Claude loaded data.nt twice into the explain store, giving Q3 three rows with two distinct blank nodes; store recreated and loaded once"
+  completed:
+    - "Wrote local-engine/bgp-first-select/data.nt: 7 lines, IRIs under http://example.com/, one blank node in subject and object position, a two-hop worksAt/develops chain, and the \"2\"/\"002\" xsd:integer pair"
+    - "Wrote q1.rq; hand-derived result (after correction) matched one solution binding ?name to Tentris"
+    - "Wrote q2.rq; 3 solutions matched as a multiset, blank node label differed from the file, order differed"
+    - "Wrote q3.rq; prediction (Alice and blank node with SparQL, Bob eliminated) matched the 2 observed solutions"
+    - "Ran Oxigraph --explain --stats on Q3 and traced the Lateral counts 3 and 2 by hand"
+    - "Wrote q4a.rq, q4b.rq and q4c.rq; each returned the single blank node solution; store dump showed 6 triples"
+    - "Answered the three-level sign-off: observable result of Q3, the Lateral/Project mechanism, and the single-BGP design rationale based on result-set blank node label scope"
+  not_completed:
+    - "Optional empty-result query (Q5) from the plan, not written"
+    - "Observing an unbound projected variable: ?age was projected but removed before any run"
+  open_questions:
+    - "Whether Oxigraph canonicalizes a query's literal constant at parse time or compares literals by value at match time; no Oxigraph documentation found stating it"
+  notes:
+    - "Engine: Oxigraph 0.5.11 (ghcr.io/oxigraph/oxigraph:0.5.11), in-memory serve container bgp-first-select-engine; chosen by live lookup as actively maintained, Apache-2.0/MIT, complete SPARQL 1.1, official prebuilt image, documented --explain/--stats; Apache Jena Fuseki considered but its docs offer a Dockerfile rather than an official prebuilt image"
+    - "Dataset loaded with PUT /store?default (Graph Store HTTP Protocol) as infrastructure; queries sent over the SPARQL 1.1 Protocol with JSON results"
+    - "Oxigraph reused the same blank node label across Q2, Q3, Q4 and the store dump"
+    - "Every IRI written in full; PREFIX and Turtle abbreviations deferred to the existing future target"
+    - "A web search for Oxigraph literal canonicalization surfaced only the Apache Jena TDB value canonicalization page"

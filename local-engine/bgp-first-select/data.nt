@@ -1,0 +1,7 @@
+<http://example.com/people/Bob> <http://example.com/relationship/worksAt> <http://example.com/company/HashiCorp> .
+<http://example.com/people/Alice> <http://example.com/relationship/worksAt> <http://example.com/company/Tentris> .
+<http://example.com/company/Tentris> <http://example.com/relationship/develops> <http://example.com/tech/SparQL> .
+_:Employee1 <http://example.com/relationship/worksAt> <http://example.com/company/Tentris> .
+<http://example.com/people/Bob> <http://example.com/relationship/knows> _:Employee1 .
+_:Employee1 <http://example.com/relationship/aged> "2"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:Employee1 <http://example.com/relationship/aged> "002"^^<http://www.w3.org/2001/XMLSchema#integer> .
