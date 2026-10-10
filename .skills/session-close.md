@@ -63,7 +63,7 @@ Write the notes file, the `.history/` entry, and the `.index/` session directory
 
 10. **Retrospective revision of an *older* session's fields is still allowed** (that's `.index/`'s whole point of difference from `.history/`), but is a deliberate, targeted `Edit` to that one file — only when this new session's evidence specifically implicates a prior classification (state the reason in your report). Never a routine side effect, never a from-scratch re-derivation of an older session just to double-check it, never mirrored into that older session's `.history/` entry.
 
-11. **Validate before finishing — no script, run these directly with Grep/Glob** (the exact checks are in `.index/schema.yml`'s `validation` section):
+11. **Validate before finishing — no script, run these directly with Grep/Glob** (the exact checks are in `.index/schema.yml`'s `validation` section). That includes a read-only one-off (a quick Python or shell loop that only reads files is still a script); each check below is its own direct Grep/Glob/`ls` call:
     - `ls .index/sessions/<slug>/ | wc -l` is exactly 10, or 11 if this session wrote `cross_repo_links.yml` per step 8b — never 11 without it, never 10 when it should be there.
     - Every title in every `prerequisites.yml`/`uses_concepts.yml`/`derived_from.yml`/`related_to.yml` you just wrote resolves: `grep -l 'title: "<ref>"' .index/sessions/*/meta.yml` finds exactly one file.
     - Every title in `unlocks.yml`/`future_targets.yml` resolves to either a session or a `.index/future-targets/*.yml` title.
