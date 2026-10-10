@@ -1,0 +1,1 @@
+Hand-wrote a 10-line N-Triples dataset (9 distinct triples, 2 blank nodes, a literal, a duplicate line), parsed and re-serialized it with rdflib's rdfpipe, and verified the round-trip by graph isomorphism rather than byte equality

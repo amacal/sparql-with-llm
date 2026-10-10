@@ -1,0 +1,6 @@
+title: "Turtle Abbreviations Versus N-Triples: Same Graph, Two Spellings (formats)"
+status: not-completed
+mentioned_by:
+  - "RDF Triples: IRIs, Literals, and Blank Nodes (formats)"
+evidence:
+  - ".history/2026-10/2026-10-10-rdf-triples-iris-literals-and-blank-nodes-formats.yml notes: Turtle abbreviations explicitly deferred to their own later session"

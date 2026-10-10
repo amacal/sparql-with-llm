@@ -1,0 +1,49 @@
+date: "2026-10-10"
+title: "RDF Triples: IRIs, Literals, and Blank Nodes (formats)"
+session:
+  file: formats/rdf-triples-basics/
+  status: completed
+  attempted:
+    - "Hand-write a small N-Triples dataset containing IRIs, a literal object, a blank node used as both subject and object, and an exact duplicate line; parse and re-serialize it and verify what survived the round-trip"
+  explored:
+    - "Triple as a three-part statement read as a labelled arrow; official names subject/predicate/object (RDF 1.1 Concepts §3.1, fetched live)"
+    - "Entity versus pure value distinction; the two-publishers merge problem motivating globally unique identifiers"
+    - "IRIs (§3.2): uniqueness as a minting convention rather than an enforced property; IRI equality by simple string comparison"
+    - "Literals (§3.3): lexical form plus datatype IRI; simple literal as shorthand for xsd:string"
+    - "Blank nodes (§3.4): labels scoped to the file and not part of the abstract syntax"
+    - "Position rules for subject/predicate/object; why a predicate cannot be a blank node"
+    - "RDF graph as a set of triples (§3): duplicate lines and line order"
+    - "N-Triples syntax (N-Triples §2.1, §2.2, §2.4, fetched live)"
+    - "Graph isomorphism (§3.6) as the definition of 'same graph' for the round-trip check"
+  tried:
+    - "Dataset v1: bare IRIs without angle brackets, no terminating '.', no blank node, literal, or duplicate"
+    - "Dataset v2: added blank nodes _:Adrian and _:HCL; IRIs still bare, no terminating '.'"
+    - "Dataset v3: added ' .' line terminators and the literal object \"HashiCorp\""
+    - "Dataset v4: added _:MyProject uses _:HCL (no blank node yet in both subject and object position)"
+    - "Dataset v5: replaced it with _:HCL developedBy HashiCorp, putting _:HCL in both positions"
+    - "Dataset v6: added an exact duplicate line and angle brackets around every IRI; file parsed as valid N-Triples"
+    - "Bind-mounting the exercise directory into the verification container (came up empty), then copying the file in with docker cp"
+  corrections:
+    - "Named the middle triple position 'action'; tested against (Alice, name, \"Alice\") and restated as 'relation', then given the official term predicate"
+    - "Stated a literal could be a subject, using the entity (Carol) as the example; after reading (\"Carol\", knows, Alice) as a statement about a string, restated that a literal cannot be a subject"
+    - "Answered '6 triples' when asked for the number of distinct blank nodes (counting triples mentioning a blank node); restated as 2 nodes"
+    - "Predicted the blank node labels Adrian and HCL would appear in the re-serialized output; observed regenerated labels _:N7ea4bca8... and _:Nfd1b2f4f...; diagnosed that blank node labels are not part of the parsed graph and any one-to-one relabelling describes the same graph"
+    - "Stated the serializer skipped the duplicate line; observed the original graph already held 9 triples at parse time"
+    - "Stated that triples were removed at parsing; corrected to: the file had 10 lines stating only 9 distinct triples, nothing was removed because a graph is a set"
+  bugs_found:
+    - "Dataset file initially was not valid N-Triples (bare IRIs without angle brackets, missing ' .' terminators); fixed by the user (terminators added in v3, angle brackets in v6); identified by reading the file, not by a parser run"
+  completed:
+    - "Wrote formats/rdf-triples-basics/triples.nt: 10 lines, 9 distinct triples, 2 blank nodes (one in both subject and object position), one literal object, one duplicate line"
+    - "Predicted 9 triples and 2 distinct blank nodes before parsing; both matched the observed output"
+    - "Parsed and re-serialized the dataset with rdfpipe; observed 9 output triples, changed line order, regenerated blank node labels, IRIs and literal unchanged"
+    - "Stated the isomorphism mapping by hand (_:Adrian to _:N7ea4..., _:HCL to _:Nfd1b..., IRIs and literals to themselves)"
+    - "Round-trip check: original and round-tripped graphs both 9 triples, rdflib isomorphic() returned True, files not byte-identical"
+    - "Answered the three-level sign-off (observable result, mechanism, design rationale)"
+  not_completed:
+    - "Running the parser on a line with a literal in subject position to observe how the tool reports the error (in the plan, not run)"
+  open_questions: —
+  notes:
+    - "Tool: rdflib 7.6.0 via rdfpipe in a disposable python:3.12-slim Docker container; chosen by live lookup as actively maintained, BSD-licensed, and able to parse and re-serialize N-Triples without a glue script. Apache Jena RIOT rejected (needs Java 21, not installed); Raptor rapper rejected (last release 2023)"
+    - "Format: N-Triples only (RDF 1.1 Recommendation); RDF 1.2 drafts noted but not used"
+    - "Bind mounts from the dev container into Docker came up empty (docker-in-docker path mismatch); docker cp used instead"
+    - "Literal datatypes/language tags and Turtle abbreviations were explicitly deferred to their own later sessions during planning and dialogue"
