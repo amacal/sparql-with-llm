@@ -1,0 +1,29 @@
+@prefix ppl: <http://example.com/people/> .
+@prefix cmp: <http://example.com/company/> .
+@prefix tch: <http://example.com/tech/> .
+@prefix rel: <http://example.com/relationship/> .
+@prefix typ: <http://example.com/type/> .
+
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+ppl:Bob
+    a typ:Person ;
+    rel:worksAt cmp:ID5 ;
+    rel:aged 40 ;
+    rel:active true ;
+    rel:knows tch:SQL, tch:SparQL, tch:AWS ;
+    rel:develops _:Garden ;
+    rel:hasSecret [] .
+
+ppl:Alice
+    a typ:Person ;
+    rel:worksAt cmp:Tentris ;
+    rel:aged 35 ;
+    rel:active false ;
+    rel:knows tch:SQL, tch:Packer, tch:QEMU ;
+    rel:develops _:Garden ;
+    rel:hasSecret [] .
+
+cmp:ID5 a typ:Company .
+cmp:Tentris a typ:Company .

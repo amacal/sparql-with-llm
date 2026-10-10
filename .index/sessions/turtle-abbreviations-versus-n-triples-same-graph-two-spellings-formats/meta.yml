@@ -1,0 +1,6 @@
+title: "Turtle Abbreviations Versus N-Triples: Same Graph, Two Spellings (formats)"
+kind: implementation
+status: demonstrated
+target: formats
+file: formats/rdf-turtle-abbreviations/
+date: "2026-10-10"

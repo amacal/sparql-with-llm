@@ -1,0 +1,45 @@
+# Turtle Abbreviations Versus N-Triples: Same Graph, Two Spellings (formats)
+
+## Overview
+
+Both earlier formats exercises wrote every triple in full N-Triples. This exercise asks what Turtle adds on top of that and checks that none of it changes the graph. The user hand-wrote two files describing the same small graph: two people, their employers, the technologies they know, one shared blank node (a garden) and one unshared blank node each (a secret). `expected.nt` is the fully expanded N-Triples version. `expected.ttl` was rewritten step by step, one shorthand at a time: prefixed names, `;` predicate lists, `,` object lists, the keyword `a`, bare numeric and boolean literals, and finally `[]` for blank nodes used only once. After each step the two files were parsed and compared as graphs. This is a `formats` exercise. It used rdflib 7.6.0 in a Python venv under `.tmp/`, following `targets/formats/README.md`'s rule that a Python-package tool lives in a venv. A live PyPI check confirmed 7.6.0 is still the latest release. The tool was reused on purpose rather than out of habit, because its literal-normalization behavior was already characterised in `rdf-literal-datatypes.md`, which kept Turtle syntax the only new variable. The normative spec is RDF 1.1 Turtle (W3C Recommendation, 2014). A live check showed RDF 1.2 Turtle still at Working Draft.
+
+## How Turtle relates to N-Triples
+
+The Turtle spec says it "provides levels of compatibility with the N-Triples format", and the direction matters. Every N-Triples document is a valid Turtle document, because Turtle's simplest statement (§2.1) is exactly three terms followed by a `.`. The reverse is false. Turtle adds shorthand that an N-Triples parser rejects, because an N-Triples line must be a complete triple with nothing carried over from the lines around it. Everything Turtle adds is therefore spelling, and the facts established in `rdf-triples-basics.md` carry over unchanged. A graph is a set of triples, and "same graph" means isomorphic, not byte-identical.
+
+## Observable behavior
+
+The final `expected.ttl` and `expected.nt` each parsed to 20 triples, and rdflib's `isomorphic()` returned `True`. Up to the step that introduced blank nodes, a sorted line diff of the two N-Triples serializations agreed with `isomorphic()` at every step, including the one step where both flagged a malformed predicate (see Edge cases). After blank nodes were added, the diff flagged four lines on each side as different while `isomorphic()` still said `True`. Every flagged line involved a blank node, and the two sides differed only in their generated labels (`_:n6f698c…b1` against `_:Nd163…`, for example). The rdflib output even replaced the user's own `_:Garden` label with a generated one.
+
+The round trip parsed `expected.ttl` and wrote it back out with rdflib's two Turtle writers, `turtle` and `longturtle`. Each output reparsed to 20 triples isomorphic to the original. Neither writer produced N-Triples-like output. Both grouped statements by subject with `;` and `,`, wrote `a` and bare `35`/`false`, and emitted `[ ]` for each secret, while the shared garden came back under a fresh generated `_:` label. The unused `rdf:` prefix declaration disappeared, statements and predicates came out in alphabetical order, and `longturtle` used SPARQL-style `PREFIX` lines without a trailing dot.
+
+## Internal mechanism
+
+A Turtle parser reads the document from top to bottom while keeping a small amount of state, and each shorthand reads or changes part of it. The first piece of state is the namespaces map (§7.1). Each `@prefix` or `PREFIX` directive assigns an IRI to a prefix label, and a later directive with the same label overwrites the earlier one from that point on. A prefixed name such as `rel:knows` is expanded by plain string concatenation of the mapped IRI and the local part. Nothing is inserted between them, so a namespace declared as `<http://example.org/people>` turns `ex:alice` into `<http://example.org/peoplealice>`. A prefix used before its declaration is an error (`Prefix "ex:" not bound`). The parser also remembers the current subject and the current predicate. `,` keeps both and starts a new object. `;` keeps the subject and expects a new predicate. `.` clears both, so the next term must start a new statement as a subject.
+
+Some shorthand needs no state at all. The token `a` is defined only in the grammar's `verb` slot (`verb ::= predicate | 'a'`) and expands there to `http://www.w3.org/1999/02/22-rdf-syntax-ns#type`. A bare `40` becomes `"40"^^xsd:integer`, a bare `1.0` becomes an `xsd:decimal`, a bare `1e0` becomes an `xsd:double` with lexical form `1e0`, and `true`/`false` become `xsd:boolean`. Blank nodes use one last piece of state, a per-document label map, so the same `_:` label always yields the same node. A `[ ... ]`, by contrast, always allocates a fresh node. That node fills whatever position the brackets occupy, and every predicate–object pair inside them becomes a triple with the fresh node as its subject.
+
+## Design rationale
+
+The two formats trade the same thing in opposite directions. Turtle is easier for a person to read and write: shared namespaces, subjects and predicates are written once, and short typed literals look like ordinary numbers. The price is that a Turtle line cannot be understood on its own. `rel:aged 40 ;` means nothing without the prefix map and the current subject from earlier in the file, so the file has to be read by a parser from the top. N-Triples gives up readability so that every line stands alone. A `.nt` file can be sorted, split, concatenated, diffed, grepped or processed in parallel with ordinary line-oriented tools, and two N-Triples files about different subjects can be merged with `cat`, apart from the usual caution that blank node labels are scoped to each file. Hence the hand-written `.nt` file served as the expected value. The labeled `_:Garden` was kept on purpose rather than converted to `[]`. Only a label can express that two statements point at the same blank node, because brackets always allocate a fresh one.
+
+## Edge cases
+
+Each of the following was observed on an invented snippet. Repeating an object, as in `"x", "x", "y"`, yields two triples, not three, because a graph is a set. Repeating a bracketed blank node instead, as in two identical lines `ex:a ex:p [ ex:q "1" ] .`, yields four triples, because each bracket allocates a new node, so nothing collapses. Writing `a` in object position is a parse error (`objectList expected`). A line indented as if it continued a `;` list after a `.` is also an error, because the `.` ended the statement. Numeric shorthand runs into the normalization blind spot from `rdf-literal-datatypes.md`: with rdflib's default `NORMALIZE_LITERALS = True`, `1e0` came out as `"1.0"^^xsd:double`, and only with the setting off did it come out as the spec-mandated `"1e0"^^xsd:double`. The user's own values (`40`, `35`, `true`, `false`) are already canonical, so normalization could not hide anything in this exercise's comparison. Finally, an N-Triples predicate written as the bare namespace `<http://www.w3.org/1999/02/22-rdf-syntax-ns#>` parsed without complaint, because the parser checks only that an IRI is well formed. It was caught solely by the graph comparison, with equal triple counts on both sides.
+
+## Worked example
+
+Take this invented Turtle document, which uses six of the shorthands at once:
+
+```
+@prefix ex: <http://example.org/> .
+ex:shop a ex:Store ;
+    ex:sells ex:tea, ex:coffee ;
+    ex:rating 4.5 ;
+    ex:owner [ ex:name "Kim" ] .
+```
+
+The parser first records `ex` mapped to `http://example.org/` in its namespaces map. It then reads `ex:shop`, expands it to `<http://example.org/shop>` and makes it the current subject. Next comes `a` in the verb slot, which becomes the rdf:type IRI, and `ex:Store` completes the first triple, `<http://example.org/shop> rdf:type <http://example.org/Store>`. The `;` keeps the subject, and `ex:sells` becomes the current predicate. Its first object, `ex:tea`, gives a second triple, and the `,` keeps both subject and predicate so that `ex:coffee` gives a third. Another `;` introduces `ex:rating` with the bare number `4.5`. It contains a decimal point and no exponent, so it becomes `"4.5"^^xsd:decimal` in a fourth triple.
+
+The last `;` introduces `ex:owner`, whose object is a bracketed property list. The parser allocates one fresh blank node, call it `_:b`, and uses it as the object, giving the fifth triple `<http://example.org/shop> <http://example.org/owner> _:b`. Inside the brackets, `ex:name "Kim"` gives the sixth triple, `_:b <http://example.org/name> "Kim"`, with the fresh node as subject. The final `.` clears the current subject and predicate. Running this exact document through rdflib produced exactly these six triples, with a generated label in place of `_:b` and `"4.5"^^<http://www.w3.org/2001/XMLSchema#decimal>` for the rating. Had the owner also been referenced elsewhere, the brackets could not have expressed it; a shared label would be needed, exactly as `_:Garden` was used here.

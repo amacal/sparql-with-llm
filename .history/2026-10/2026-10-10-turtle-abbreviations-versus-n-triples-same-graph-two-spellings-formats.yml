@@ -1,0 +1,60 @@
+date: "2026-10-10"
+title: "Turtle Abbreviations Versus N-Triples: Same Graph, Two Spellings (formats)"
+session:
+  file: formats/rdf-turtle-abbreviations/
+  status: completed
+  attempted:
+    - "Hand-write a fully expanded N-Triples graph (expected.nt) and an equivalent Turtle file (expected.ttl), introducing one Turtle shorthand per step (prefixed names, ;, ,, a, numeric/boolean literals, []) and checking graph equality after each step"
+    - "Round-trip the final Turtle file through rdflib's turtle and longturtle writers and compare the reparsed graphs to the original"
+  explored:
+    - "Direction of Turtle/N-Triples compatibility (RDF 1.1 Turtle §1, §2.1, fetched live)"
+    - "Prefixed names and @prefix/PREFIX directives (§2.4, fetched live); namespaces map in parser state (§7.1, fetched live)"
+    - "Predicate lists (§2.2) and object lists (§2.3), fetched live"
+    - "rdf:type as a predicate stating class membership, and the keyword a with grammar production verb ::= predicate | 'a' (§2.4, §6.5, fetched live)"
+    - "Numeric and boolean shorthand (§2.5.2, §2.5.3, fetched live)"
+    - "Labeled blank nodes and [] / blankNodePropertyList allocation of fresh blank nodes (§2.6, §2.7, fetched live)"
+    - "Why isomorphism reduces to triple-set equality when no blank nodes are present, and why a line diff diverges from isomorphism once they are"
+    - "Why a shared blank node cannot be written with []"
+    - "What a parse/serialize round trip cannot preserve: prefix labels, blank node labels, statement and predicate order, layout"
+    - "Line-independence of N-Triples versus context-dependence of Turtle as the design trade-off"
+  tried:
+    - "Invented snippet with a namespace IRI lacking a trailing slash, parsed with rdfpipe"
+    - "Invented snippet with a ; list broken by a premature ., parsed with rdfpipe"
+    - "Invented snippet using a prefix before its declaration, and one redeclaring the same prefix label"
+    - "Invented snippet with a in object position"
+    - "Invented snippet with 1, 1.0, 1e0, \"1\", true, \"true\" as objects, parsed with NORMALIZE_LITERALS on and off"
+    - "Invented snippet with two identical [ ex:q \"1\" ] statements"
+    - "expected.ttl iterations: full IRIs replaced by prefixes; ; grouping; , grouping; type triples via rdf:type then a; bare 40/35/true/false; _:Garden shared label plus labeled secrets; outer brackets wrapped around a subject; [] for the secrets"
+    - "Comparison helper in .tmp/ reporting triple counts, isomorphic(), and a sorted N-Triples line diff, run after every step"
+    - "Round trip through rdflib turtle and longturtle writers with reparse and isomorphic() check"
+  corrections:
+    - "Predicted @prefix ex: <http://example.org/people> with ex:alice expands to <http://example.org/people/#alice>; observed <http://example.org/peoplealice> — corrected to plain string concatenation with nothing inserted"
+    - "Predicted \"x\", \"x\", \"y\" yields 3 triples; observed 2 — corrected via the graph being a set, not a bag"
+    - "Predicted ex:Dog ex:label a . parses with a as an object; observed parse error (objectList expected) — corrected to a being valid only in the verb (predicate) position"
+    - "Asked for the lexical form of 1e0, answered with the datatype (double) and then \"typed string\"; corrected via the spec example \"4.2E9\"^^xsd:double to lexical form = the bare character string (1e0), separate from the datatype IRI"
+    - "Predicted two identical ex:a ex:p [ ex:q \"1\" ] . statements yield 1 triple; observed 4 — corrected to each statement expanding to 2 triples and each [ ] allocating a fresh blank node so nothing collapses"
+    - "Predicted the round-trip Turtle output would be fully expanded like N-Triples; observed both writers abbreviating heavily, with [ ] for single-use blank nodes and a generated label for the shared one"
+    - "Described isomorphism without blank nodes in terms of prefix resolution; corrected to: with no blank nodes to rename, isomorphism is equality of the triple sets"
+    - "Described a graph as an unordered list; corrected to a set"
+    - "Described , as reusing only the predicate in the sign-off; corrected to reusing subject and predicate"
+  bugs_found:
+    - "@prefix directives in expected.ttl initially lacked the terminating .; fixed by the user"
+    - "Datatypes initially written as \"40\"^^integer using a prefix bound to the full xsd:integer IRI, so the bare token was not a prefixed name; fixed by the user to an xsd: namespace prefix with xsd:integer/xsd:boolean"
+    - "Company type statements in expected.ttl used undeclared prefix type: instead of declared typ:, rejected as Prefix not bound; fixed by the user"
+    - "Company rdf:type triples in expected.nt used the bare namespace IRI <http://www.w3.org/1999/02/22-rdf-syntax-ns#> as predicate; parsed without error with equal triple counts, caught only by isomorphic() False and the line diff; fixed by the user"
+    - "Two blank-node lines added to expected.nt lacked the terminating .; fixed by the user"
+    - "First [] attempt wrapped the whole subject block in brackets ([ ppl:Bob a typ:Person ; ... ]); identified before parsing as making ppl:Bob a predicate and a an object; reverted by the user"
+  completed:
+    - "Wrote formats/rdf-turtle-abbreviations/expected.nt: 20 triples, including a shared blank node _:Garden and two single-use blank nodes"
+    - "Wrote formats/rdf-turtle-abbreviations/expected.ttl using prefixes, ;, ,, a, bare integer/boolean literals, a shared _:Garden label and [] for single-use blank nodes"
+    - "Final comparison: 20 vs 20 triples, isomorphic() True; sorted line diff showed 4 lines per side differing only in blank node labels"
+    - "Round trip via rdflib turtle and longturtle writers: each reparsed to 20 triples isomorphic to the original; rdf: prefix dropped, order alphabetized, shared blank node relabeled, secrets emitted as [ ]"
+    - "Answered all three sign-off levels (observable behavior, internal mechanism, design rationale)"
+  not_completed: —
+  open_questions: —
+  notes:
+    - "Tool: rdflib 7.6.0 (rdfpipe plus a Claude-owned comparison helper) in a venv under .tmp/, per targets/formats/README.md for Python-package tools; latest release confirmed live on PyPI; reused deliberately so Turtle syntax was the only new variable, pyoxigraph considered and not chosen"
+    - "Formats: RDF 1.1 Turtle (W3C Recommendation, normative) versus N-Triples; RDF 1.2 Turtle confirmed live to still be a Working Draft"
+    - "rdflib's default literal normalization rewrote 1e0 to \"1.0\"^^xsd:double; with NORMALIZE_LITERALS = False the output was \"1e0\"^^xsd:double as the spec table prescribes"
+    - "Exercise Turtle file was named expected.ttl by the user rather than the suggested graph.ttl"
+    - "Turtle collections (§2.8) were out of scope and not raised"

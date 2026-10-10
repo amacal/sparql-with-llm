@@ -1,0 +1,1 @@
+Rewrote a hand-written 20-triple N-Triples graph into Turtle one shorthand at a time (prefixed names, ;, ,, a, numeric/boolean literals, shared _: label versus []) and verified with rdflib 7.6.0 that it stayed isomorphic, then round-tripped it through two Turtle writers and observed that prefix labels, blank node labels and order are not preserved while the graph is.

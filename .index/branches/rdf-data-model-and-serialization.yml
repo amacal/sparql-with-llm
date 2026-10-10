@@ -2,7 +2,7 @@ title: "RDF Data Model and Serialization"
 sessions:
   - "RDF Triples: IRIs, Literals, and Blank Nodes (formats)"
   - "Literal Datatypes and Language Tags (formats)"
-frontier:
-  - "Literal Datatypes and Language Tags (formats)"
-explicit_future_targets:
   - "Turtle Abbreviations Versus N-Triples: Same Graph, Two Spellings (formats)"
+frontier:
+  - "Turtle Abbreviations Versus N-Triples: Same Graph, Two Spellings (formats)"
+explicit_future_targets: —
