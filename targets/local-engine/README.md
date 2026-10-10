@@ -50,11 +50,46 @@ docker inspect -f '{{.NetworkSettings.IPAddress}}' <dir>-engine
 docker port <dir>-engine
 ```
 
+A bind mount isn't the only way in, and isn't always the simplest one: an
+engine with an HTTP load endpoint can take the dataset over the wire once
+it's running, and an engine whose own CLI subcommand (a bulk load, a
+query-plan/explain mode) needs files inside the container can get them via
+a named volume instead. Many engine images are minimal and ship no shell,
+so `docker exec ... sh` is not available to stage files — create the
+volume, attach it to a short-lived `docker create`d container, `docker cp`
+the dataset and query files into it, remove that container, then run each
+engine subcommand as its own `docker run --rm -v <dir>-vol:/<path>`
+against the same volume:
+
+```bash
+docker volume create <dir>-vol
+docker create --name <dir>-cp -v <dir>-vol:/in <chosen-engine-image> <any-no-op-arg>
+docker cp local-engine/<dir>/<dataset-file> <dir>-cp:/in/
+docker rm <dir>-cp
+docker run --rm -v <dir>-vol:/in <chosen-engine-image> <engine-subcommand> ...
+```
+
+A persistent store inside such a volume keeps whatever was loaded into it,
+so load the dataset into it exactly once — a second load of the same file
+is not a no-op when the file contains blank nodes (each load mints fresh
+ones), and silently changes what every later query returns.
+
 Confirm the container is actually ready to accept queries (a log line, a
 health endpoint, a simple `ASK` query that doesn't depend on the exercise's
 own data) before trusting any result from it — a container that's still
 loading a dataset can otherwise return a misleadingly empty result that
 looks like a real answer.
+
+Then confirm what the engine actually stored, separately from anything a
+query returns: dump the loaded graph back out (most engines support the
+SPARQL 1.1 Graph Store HTTP Protocol's `GET` on the default graph, or an
+equivalent export/dump subcommand — confirm from the engine's docs) and
+compare it against the dataset file the exercise wrote, triple count and
+terms both. An engine is free to canonicalize literals, regenerate blank
+node labels, or collapse triples that become identical on load, and a
+query result alone can't distinguish "the engine stored something
+different" from "the engine matched differently" — the dump is what
+separates the two.
 
 ## Query it
 
@@ -71,6 +106,7 @@ for this part.
 
 ```bash
 docker rm -f <dir>-engine
+docker volume rm <dir>-vol   # only if a named volume was used
 ```
 
 Every container is ephemeral: destroyed at the end of the sitting that
