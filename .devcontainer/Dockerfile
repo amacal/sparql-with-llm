@@ -5,10 +5,11 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # see CLAUDE.md's "No hardcoded technology". This image only provides generic
 # infrastructure: enough to reach GitHub, to spin up and tear down whatever
 # container a session's plan agent decides on (via Docker-outside-of-Docker),
-# and to run Claude Code itself. Every engine/format choice is made fresh, per
+# to run Claude Code itself, and to YAML-parse .history/.index files for
+# validation (python3-yaml). Every engine/format choice is made fresh, per
 # exercise, documented in that exercise's own notes/history — never here.
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates curl git ripgrep jq tzdata python3 python3-venv \
+    ca-certificates curl git ripgrep jq tzdata python3 python3-venv python3-yaml \
     && rm -rf /var/lib/apt/lists/*
 
 RUN GH_RELEASE=$(curl -fsSL https://api.github.com/repos/cli/cli/releases/latest) \

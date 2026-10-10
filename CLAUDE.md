@@ -83,8 +83,9 @@ live-lookup step.
   unbound variable is even representable). No server needed here, and no
   engine choice to make; the relevant tool is whatever parses or serializes
   the format in question, chosen the same deliberate, looked-up-fresh way
-  as a `local-engine` exercise's engine. No credentials needed. Directory:
-  `formats/`.
+  as a `local-engine` exercise's engine — see `targets/formats/README.md`
+  for where that tool runs and how the dataset reaches it. No credentials
+  needed. Directory: `formats/`.
 - **Remote public endpoint (real network, no credentials)** — querying a
   real, large, publicly reachable SPARQL endpoint over the standard SPARQL
   1.1 Protocol. Genuinely different from `local-engine`: real network
@@ -917,6 +918,11 @@ decision.
   otherwise wouldn't return cleanly — and commit is handled automatically at
   close (see "Session closing ritual"); pushing to a remote stays your
   manual decision.
+- Command output Claude runs is not reliably visible to you — whenever a
+  result matters to the dialogue (a parser's output, a query's bindings, a
+  comparison's verdict), paste the real output verbatim into the chat
+  message itself, alongside the exact command, rather than assuming you saw
+  it in the tool call.
 - File naming: Claude may rename exercise directories to minimize
   alphabetical clusters (shared prefix for related exercises) when a new
   exercise makes better grouping obvious.
