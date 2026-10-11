@@ -40,8 +40,11 @@ docker pull <chosen-engine-image>
 
 # most engines expose either a bulk-load step at container startup (reading
 # a mounted dataset file or directory) or an HTTP load endpoint once running
-# — confirm which from that engine's own docs before assuming either
-docker run -d --name <dir>-engine \
+# — confirm which from that engine's own docs before assuming either;
+# --init runs a tiny init as PID 1 that forwards signals and reaps child
+# processes, so the engine's server process can't linger as a zombie that
+# makes `docker rm -f` fail at teardown
+docker run -d --init --name <dir>-engine \
   -v "$HOST_WS/local-engine/<dir>/<dataset-file>:/<engine-expected-path>:ro" \
   -p 0:<engine-sparql-port> <chosen-engine-image>
 
