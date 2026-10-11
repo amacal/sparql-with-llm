@@ -2,6 +2,8 @@ title: "SPARQL Query Patterns"
 sessions:
   - "Basic Graph Patterns: A First SELECT Query (local-engine)"
   - "Optional Pattern with an Unbound Variable (local-engine)"
+  - "FILTER and Three-Valued Logic over Unbound Variables (local-engine)"
 frontier:
-  - "Optional Pattern with an Unbound Variable (local-engine)"
-explicit_future_targets: —
+  - "FILTER and Three-Valued Logic over Unbound Variables (local-engine)"
+explicit_future_targets:
+  - "FILTER Inside Versus Outside an OPTIONAL Group (local-engine)"

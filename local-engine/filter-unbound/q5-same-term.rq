@@ -1,0 +1,7 @@
+select ?person ?age ?years
+where
+{
+    filter(sameTerm(?age, 20)) .
+    ?person <http://example.com/relationship/aged> ?age .
+    optional { ?person <http://example.com/relationship/experienced> ?years . } .
+}

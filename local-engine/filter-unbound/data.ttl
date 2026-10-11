@@ -1,0 +1,17 @@
+@prefix ppl: <http://example.com/people/> .
+@prefix rel: <http://example.com/relationship/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ppl:Bob
+    rel:aged 46 ;
+    rel:experienced 10 .
+
+ppl:Alice
+    rel:aged "020"^^xsd:integer .
+
+ppl:Ben
+    rel:aged 21 ;
+    rel:experienced "2 years" .
+
+ppl:James
+    rel:aged 16 .

@@ -1,0 +1,6 @@
+title: "FILTER and Three-Valued Logic over Unbound Variables (local-engine)"
+kind: implementation
+status: demonstrated
+target: local-engine
+file: local-engine/filter-unbound/
+date: "2026-10-11"

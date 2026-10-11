@@ -1,0 +1,50 @@
+date: "2026-10-11"
+title: "FILTER and Three-Valued Logic over Unbound Variables (local-engine)"
+session:
+  file: local-engine/filter-unbound/
+  status: completed
+  attempted:
+    - "Answer the OPTIONAL session's open question of how an unbound variable behaves inside a FILTER comparison: hand-write a Turtle dataset with an optional property that is integer, string or absent plus one non-canonical integer, and write FILTER queries against it in a local SPARQL engine, predicting each result by hand"
+  explored:
+    - "SPARQL 1.1 §3 and §3.2 FILTER introduction, fetched live and quoted verbatim; the §3.2 price example traced as full solution mappings before projection"
+    - "§5.2.2 Scope of Filters, fetched live: filter placement inside a group does not change the result"
+    - "§17.2 Filter Evaluation: unbound arguments raise a type error, errors propagate except through || and &&, the T/F/E truth table, FILTER drops false and error"
+    - "§17.2.2 effective boolean value, §17.4.1.1 bound, §17.3 operator mapping table rows for = and !=, §17.4.1.7 RDFterm-equal, §17.4.1.8 sameTerm, all fetched live"
+    - "Verbal check: !(?years = 10) on an unbound ?years evaluates to error and drops the solution"
+    - "The user's own De Morgan rewrite !(bound(?years) && ?years = 10) checked against all four people under three-valued logic (reasoned, not run)"
+    - "Why the BGP session's Oxigraph pattern with 2 found data written as 002, given Oxigraph's load-time canonicalization"
+  tried:
+    - "First q2 draft used the SQL operator <> and filtered ?age instead of ?years; RDF4J returned MALFORMED QUERY: Encountered \"<>\" ... Was expecting one of: \")\" \"=\" \"!=\""
+    - "First q1 draft had no OPTIONAL experience pattern; extended before running"
+    - "First q4 draft filtered ?years = 20 instead of ?age = 20; corrected before running"
+    - "Filters written at the top of the group, before the triple patterns, in every filter query (q2 to q5)"
+  corrections:
+    - "Read the §3.2 example as dropping the 23-priced book; restated after evaluating 42 < 30.5 as false that the 42-priced book is dropped and the 23-priced one kept"
+    - "Stated unbound variables are not compared so cannot be rejected by a filter; q2 showed they are dropped, because a comparison with an unbound argument is a type error"
+    - "Predicted q2 (?years != 10) would keep Alice, Ben and James and drop only Bob; observed zero solutions; diagnosed Alice and James as type errors from an unbound argument and Ben as a type error from RDFterm-equal on two non-identical literals, with fn:not passing the error through"
+    - "Stated that any error in an || propagates; restated from the truth table that T || E is T and F || E is E"
+    - "Predicted the triple-pattern constant 20 in q6 would match Alice's \"020\" by value; observed zero solutions; restated that triple patterns match by term, and that Oxigraph's earlier match came from canonicalization at load, not value comparison at match time"
+    - "During sign-off described FILTER as preserving T, E and F in order; separated expression-level || combination from the FILTER-level rule that only T is kept"
+    - "During sign-off said Ben survived q3 because he was unbound; corrected to Ben bound to \"2 years\" and dropped, with Alice and James the q3 survivors"
+  bugs_found:
+    - "data.ttl ended Ben's aged statement with . instead of ;, which would leave the experienced line without a subject; found by review before loading and fixed by the user"
+    - "q2 draft used <>, which is not a SPARQL operator; the parser read it as an empty IRI; fixed to !="
+  completed:
+    - "Wrote local-engine/filter-unbound/data.ttl: 6 triples, 4 people, integer ages with Alice's written as \"020\"^^xsd:integer, experienced as integer 10 (Bob), string \"2 years\" (Ben), absent (Alice, James); RDF4J dump confirmed 6 triples and \"020\" stored verbatim"
+    - "Wrote q1-baseline.rq; prediction of 4 solutions with ?years absent for Alice and James and Alice's age as \"020\" matched the JSON result field by field"
+    - "Wrote q2-filter-neg.rq; observed an empty bindings array and traced each person to F or E"
+    - "Wrote q3-filter-bound.rq; prediction of Alice and James only matched the TSV and JSON results"
+    - "Wrote q4-eq.rq; prediction of Alice only matched, binding still \"020\"^^xsd:integer"
+    - "Wrote q5-same-term.rq; prediction of zero solutions matched"
+    - "Wrote q6-pattern-constant.rq; observed zero solutions"
+    - "Answered the three-level sign-off: q2 and q3 results per person with T/F/E, the required pattern plus left join plus filter plus projection mechanism, and the rationale for errors over silently picking a meaning for missing data"
+  not_completed:
+    - "Stretch case: the same filter placed inside the OPTIONAL group versus outside it (§6.2, LeftJoin expression), not written"
+    - "RDF4J query-plan (explain) over HTTP not attempted"
+  open_questions:
+    - "Why RDF4J's TSV output printed Alice's \"020\"^^xsd:integer age as 20 while its JSON output kept \"020\""
+  notes:
+    - "Engine: Eclipse RDF4J Server 6.0.1 (eclipse/rdf4j-workbench:6.0.1-jetty), in-memory repository 'filter' created over REST PUT from RDF4J's memory-store template with mem.persist false and defaultQueryEvaluationMode STRICT; chosen by a fresh live lookup as the cross-engine candidate named in the OPTIONAL session and because Oxigraph's load-time literal canonicalization would hide the = versus sameTerm contrast; first engine change in this repo"
+    - "Container filter-unbound-engine at bridge IP 172.17.0.4 port 8080; repository config kept under .tmp only"
+    - "q6 resolves the BGP session's open question about query-constant matching for this engine: triple-pattern constants match by term"
+    - "Query file named q2-filter-neg.rq rather than the suggested q2-filter-neq.rq, and q5-same-term.rq rather than q5-sameterm.rq"
