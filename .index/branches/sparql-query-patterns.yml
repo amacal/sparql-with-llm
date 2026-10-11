@@ -1,6 +1,7 @@
 title: "SPARQL Query Patterns"
 sessions:
   - "Basic Graph Patterns: A First SELECT Query (local-engine)"
+  - "Optional Pattern with an Unbound Variable (local-engine)"
 frontier:
-  - "Basic Graph Patterns: A First SELECT Query (local-engine)"
+  - "Optional Pattern with an Unbound Variable (local-engine)"
 explicit_future_targets: —

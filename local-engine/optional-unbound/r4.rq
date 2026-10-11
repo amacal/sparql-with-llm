@@ -1,0 +1,6 @@
+select ?person ?age ?employer
+where
+{
+    ?person <http://example.com/relationship/aged> ?age .
+    optional { ?person <http://example.com/relationship/worksAt> ?employer } .
+}

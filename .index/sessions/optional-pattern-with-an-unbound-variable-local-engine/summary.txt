@@ -1,0 +1,1 @@
+Hand-wrote an 8-triple Turtle dataset and six full-IRI SELECT queries against Oxigraph 0.5.11, verified that OPTIONAL keeps a subject with no match with the variable absent from its JSON binding object, contrasted required, empty-result and misplaced-OPTIONAL variants, and traced the LeftJoin definition and the ForLoopLeftJoin plan counts by hand

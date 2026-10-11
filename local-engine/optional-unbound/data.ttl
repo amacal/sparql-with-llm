@@ -1,0 +1,19 @@
+@prefix ppl: <http://example.com/people/> .
+@prefix cmp: <http://example.com/company/> .
+@prefix rel: <http://example.com/relationship/> .
+
+ppl:Bob
+    rel:aged 46 ;
+    rel:worksAt cmp:ID5 ;
+    rel:worksAt cmp:Tentris .
+
+ppl:Alice
+    rel:aged 20 ;
+    rel:worksAt cmp:Tentris .
+
+ppl:Ben
+    rel:aged 21 .
+
+ppl:James
+    rel:aged 16 ;
+    rel:worksAt [] .

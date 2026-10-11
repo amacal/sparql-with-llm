@@ -1,0 +1,6 @@
+title: "Optional Pattern with an Unbound Variable (local-engine)"
+kind: implementation
+status: demonstrated
+target: local-engine
+file: local-engine/optional-unbound/
+date: "2026-10-11"

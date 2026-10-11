@@ -1,0 +1,6 @@
+select ?person ?age ?years
+where
+{
+    ?person <http://example.com/relationship/aged> ?age .
+    ?person <http://example.com/relationship/experienced> ?years .
+}

@@ -1,0 +1,58 @@
+date: "2026-10-11"
+title: "Optional Pattern with an Unbound Variable (local-engine)"
+session:
+  file: local-engine/optional-unbound/
+  status: completed
+  attempted:
+    - "Hand-write a small Turtle dataset where one subject has an optional property twice, one once, one not at all, and one has a blank node value; write required and OPTIONAL SELECT queries against it in a local SPARQL engine, observe an unbound projected variable and an empty result, and trace the left join in the spec's algebra and the engine's query plan"
+  explored:
+    - "Missing data in RDF: no null term, a subject either has a triple with a predicate or not (chat example with three made-up people)"
+    - "Required two-pattern BGP over the chat example: which partial solutions merge on the shared variable and why one subject drops"
+    - "A solution containing an unbound variable written as a mapping with fewer pairs; domain of a mapping"
+    - "SPARQL 1.1 §6.1 Optional Pattern Matching, fetched live and excerpted verbatim"
+    - "§6.1 equivalence { OPTIONAL { pattern } } = { { } OPTIONAL { pattern } }; the empty group's single empty solution, compared with Oracle's DUAL table"
+    - "SPARQL 1.1 Query Results JSON Format, fetched live: unbound variable absent from a binding object; zero elements for an empty solution sequence"
+    - "§18 definitions Compatible Mappings, Join, Diff and LeftJoin (full three-set form), fetched live and excerpted; expr = true for a plain OPTIONAL"
+    - "Whether an unbound variable can make two mappings incompatible, contrasted with SQL NULL in an equi-join"
+    - "Oxigraph --explain --stats plan for r4: Project over ForLoopLeftJoin(expression true) over two QuadPattern nodes, 5/5/4/4 results, per-run counts traced"
+    - "OPTIONAL versus required pattern versus two queries merged by the client, given §2.4 blank node label scope"
+  tried:
+    - "r2.rq written with aged inside OPTIONAL and worksAt required (the reverse of the intended query); kept and run as its own case"
+    - "r3.rq written with the OPTIONAL block before the required aged pattern; kept and run as its own case"
+    - "r4.rq with aged required first and worksAt in OPTIONAL after it"
+    - "Claude's first explain attempt passed a file argument to --explain (a flag printing to stderr) and the first explain-store dump omitted --graph default for N-Triples; both rerun correctly"
+  corrections:
+    - "Described the optional solution for a subject without the property as holding None/null, then as (Cleo, unbound); restated as a two-pair mapping with no pair for the unbound variable"
+    - "Described OPTIONAL as exactly like SQL LEFT JOIN; restated that the unmatched side yields an absent variable, not a NULL value"
+    - "Predicted r3.rq would return 5 solutions including Ben; observed 4 without Ben; diagnosed as the OPTIONAL's left side being the empty group, so the required aged pattern was joined afterwards and Ben's mapping matched none of the 4 worksAt solutions"
+    - "Described the empty group { } as producing no solution and as containing Ben; restated as producing exactly one empty mapping"
+    - "Stated the LeftJoin's second set (unmatched left solutions) for r4 contained all people; corrected to Ben only, giving 4 merged plus 1 unchanged"
+    - "Stated two mappings sharing ?person but with different other variables were incompatible; restated that only variables in both domains are compared"
+    - "Stated the per-solution worksAt runs in the explain plan covered 3 people (not Ben); corrected to 4 runs returning 1, 0, 1 and 2"
+    - "Stated unbound <> unbound like null <> null; tested against the compatibility definition and restated that an unbound variable is never compared, so it never causes incompatibility"
+    - "Stated a client-side merge breaks because the employer value is a blank node; refined to: it breaks only when the join key itself is a blank node"
+    - "Described Ben as unemployed; restated as having no worksAt triple in the graph"
+  bugs_found:
+    - "r2.rq made aged optional and worksAt required, the reverse of the intended query; found by tracing Ben through the query before running; the user wrote the intended version as r4.rq"
+    - "r3.rq placed the OPTIONAL before the required pattern, dropping subjects without the optional property; found by a wrong prediction; the user wrote the intended version as r4.rq"
+  completed:
+    - "Wrote local-engine/optional-unbound/data.ttl: 8 triples, 4 people, rel:worksAt twice/once/absent/blank node, integer ages; store dump confirmed 8 triples as xsd:integer and a blank node"
+    - "Wrote r1.rq (both patterns required); prediction of 4 solutions without Ben, blank node type bnode, label engine-dependent matched the observed result"
+    - "Wrote r2.rq; predicted the same 4 solutions as r1 and observed them"
+    - "Wrote r3.rq; observed 4 solutions without Ben and traced why by hand"
+    - "Wrote r4.rq; prediction of 5 solutions with Ben's binding object lacking employer matched the observed JSON, with employer still in head.vars"
+    - "Wrote r5.rq (required non-existent predicate); prediction of empty bindings with ?years in head.vars matched exactly"
+    - "Wrote r6.rq (same predicate optional); prediction of all 4 people once with years unbound matched"
+    - "Traced r4 through the LeftJoin definition (4 merged + 1 unchanged = 5) and through the engine plan's per-run counts (1 + 0 + 1 + 2 = 4)"
+    - "Answered the three-level sign-off: observable result of r4 versus r5, LeftJoin mechanism and the r3 ordering effect, and the design rationale for placement, OPTIONAL and an engine-side join"
+  not_completed:
+    - "Stretch case: an OPTIONAL group of two triple patterns where only one would match (whole group must match), not written"
+    - "Stretch case: two independent OPTIONALs in one query (§6.3), not written"
+  open_questions:
+    - "How an unbound variable behaves inside a FILTER comparison (raised in contrast to SQL NULL, deferred until FILTER is introduced)"
+  notes:
+    - "Engine: Oxigraph 0.5.11 (ghcr.io/oxigraph/oxigraph:0.5.11), in-memory serve container optional-unbound-engine plus an on-disk explain store on volume optional-unbound-vol loaded once; re-chosen by a fresh live lookup (latest release 2026-09-02) and kept to isolate OPTIONAL against the prior session's Lateral plan; RDF4J 6.x noted as a later cross-engine comparison candidate (official image, no explain over HTTP)"
+    - "The blank node was labelled e806fdb40a40ce0274d1126840124c10 in the serve store and d611b4f603e00d0f24e0f7ead831e90f in the separately loaded explain store"
+    - "TSV output from the explain run showed Ben's unbound employer as an empty field"
+    - "r5.rq and r4.rq cover the two items left unfinished in Basic Graph Patterns: A First SELECT Query (local-engine): an empty-result query and an unbound projected variable"
+    - "The user placed the blank node in object position rather than the suggested subject position"
