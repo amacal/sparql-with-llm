@@ -1,4 +1,4 @@
-Write the notes file, the `.history/` entry, and the `.index/` session directory for the session that just ended. Follow every CLAUDE.md rule exactly. No scripts — every write here is a direct `Write`/`Edit`; every lookup is `Read`/`Grep`/`Glob` against `.index/`/`.history/`, per `.index/schema.yml` and `.history/schema.yml`.
+Write the notes file, the `.history/` entry, and the `.index/` session directory for the session that just ended. Follow every CLAUDE.md rule exactly. No scripts, and no shell redirection or heredocs standing in for one — every write here is a direct `Write`/`Edit` tool call; every lookup is `Read`/`Grep`/`Glob` against `.index/`/`.history/`, per `.index/schema.yml` and `.history/schema.yml`.
 
 ## Steps
 
