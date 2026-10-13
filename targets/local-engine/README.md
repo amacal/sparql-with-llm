@@ -35,6 +35,18 @@ HOST_WS=$(docker inspect "$(hostname)" \
 The general shape, once the plan agent has named a concrete engine image and
 checked its own docs for its actual load mechanism and default port:
 
+Not every engine publishes a prebuilt image. When the chosen one doesn't,
+build it locally from the engine's own official build kit (its published
+Dockerfile or equivalent artifact, fetched fresh — never a third-party
+image), unpacked under `.tmp/`, and tag it after the exercise directory
+(`<dir>-engine-image`) so teardown knows exactly what to remove:
+
+```bash
+docker build -t <dir>-engine-image .tmp/<engine-build-kit>/
+```
+
+Otherwise, pull the published image:
+
 ```bash
 docker pull <chosen-engine-image>
 
@@ -110,6 +122,7 @@ for this part.
 ```bash
 docker rm -f <dir>-engine
 docker volume rm <dir>-vol   # only if a named volume was used
+docker rmi <dir>-engine-image  # only if the image was built locally
 ```
 
 Every container is ephemeral: destroyed at the end of the sitting that
