@@ -33,16 +33,21 @@ HOST_WS=$(docker inspect "$(hostname)" \
 ```
 
 The general shape, once the plan agent has named a concrete engine image and
-checked its own docs for its actual load mechanism and default port:
+checked its own docs for its actual load mechanism and default port. Every
+name below carries an engine number `<n>` — `1` for the exercise's engine,
+`2` and up for any further engine brought up in the same sitting (a
+cross-engine check of the same query, see CLAUDE.md's "Cross-engine and
+cross-format comparison") — so two engines never collide and teardown can
+remove all of them by pattern:
 
 Not every engine publishes a prebuilt image. When the chosen one doesn't,
 build it locally from the engine's own official build kit (its published
 Dockerfile or equivalent artifact, fetched fresh — never a third-party
 image), unpacked under `.tmp/`, and tag it after the exercise directory
-(`<dir>-engine-image`) so teardown knows exactly what to remove:
+(`<dir>-engine-<n>-image`) so teardown knows exactly what to remove:
 
 ```bash
-docker build -t <dir>-engine-image .tmp/<engine-build-kit>/
+docker build -t <dir>-engine-<n>-image .tmp/<engine-build-kit>/
 ```
 
 Otherwise, pull the published image:
@@ -56,13 +61,13 @@ docker pull <chosen-engine-image>
 # --init runs a tiny init as PID 1 that forwards signals and reaps child
 # processes, so the engine's server process can't linger as a zombie that
 # makes `docker rm -f` fail at teardown
-docker run -d --init --name <dir>-engine \
+docker run -d --init --name <dir>-engine-<n> \
   -v "$HOST_WS/local-engine/<dir>/<dataset-file>:/<engine-expected-path>:ro" \
   -p 0:<engine-sparql-port> <chosen-engine-image>
 
 # the address to query (SPARQL 1.1 Protocol, usually an HTTP GET/POST):
-docker inspect -f '{{.NetworkSettings.IPAddress}}' <dir>-engine
-docker port <dir>-engine
+docker inspect -f '{{.NetworkSettings.IPAddress}}' <dir>-engine-<n>
+docker port <dir>-engine-<n>
 ```
 
 A bind mount isn't the only way in, and isn't always the simplest one: an
@@ -73,21 +78,29 @@ a named volume instead. Many engine images are minimal and ship no shell,
 so `docker exec ... sh` is not available to stage files — create the
 volume, attach it to a short-lived `docker create`d container, `docker cp`
 the dataset and query files into it, remove that container, then run each
-engine subcommand as its own `docker run --rm -v <dir>-vol:/<path>`
+engine subcommand as its own `docker run --rm -v <dir>-engine-<n>-vol:/<path>`
 against the same volume:
 
 ```bash
-docker volume create <dir>-vol
-docker create --name <dir>-cp -v <dir>-vol:/in <chosen-engine-image> <any-no-op-arg>
-docker cp local-engine/<dir>/<dataset-file> <dir>-cp:/in/
-docker rm <dir>-cp
-docker run --rm -v <dir>-vol:/in <chosen-engine-image> <engine-subcommand> ...
+docker volume create <dir>-engine-<n>-vol
+docker create --name <dir>-engine-<n>-cp -v <dir>-engine-<n>-vol:/in <chosen-engine-image> <any-no-op-arg>
+docker cp local-engine/<dir>/<dataset-file> <dir>-engine-<n>-cp:/in/
+docker rm <dir>-engine-<n>-cp
+docker run --rm -v <dir>-engine-<n>-vol:/in <chosen-engine-image> <engine-subcommand> ...
 ```
 
 A persistent store inside such a volume keeps whatever was loaded into it,
 so load the dataset into it exactly once — a second load of the same file
 is not a no-op when the file contains blank nodes (each load mints fresh
 ones), and silently changes what every later query returns.
+
+The devcontainer deliberately ships no RDF parser of its own (that would be
+a default tool by the back door), so the engine's loader *is* the dataset's
+parse check: a syntax error in the exercise's dataset surfaces as that
+loader's error message. Paste it into chat verbatim, line number included,
+and remember that a parser reports where it got stuck — often a line or
+two after the actual mistake. Reload only once the file is fixed, clearing
+whatever a failed load may have partially stored first.
 
 Confirm the container is actually ready to accept queries (a log line, a
 health endpoint, a simple `ASK` query that doesn't depend on the exercise's
@@ -117,12 +130,29 @@ requesting whichever result format the exercise is using via the `Accept`
 header, is the generic mechanism — no engine-specific client library needed
 for this part.
 
+Some engines only load into a named graph, and what such an engine treats
+as the default graph when a query names none (empty, or the union of every
+graph) is its own choice, not the standard's. Until named graphs and `FROM`
+have been taught in a session of their own, keep the exercise's query file
+free of them and let the protocol request carry the dataset instead: the
+SPARQL 1.1 Protocol's `default-graph-uri` parameter names the graph to use
+as the default graph for that one request, shown in the command printed in
+chat so the mechanism is visible rather than hidden:
+
+```bash
+curl -s http://<engine-ip>:<port>/<endpoint-path> \
+  -H 'Accept: <result-format>' \
+  --data-urlencode 'default-graph-uri=<graph-iri-the-dataset-was-loaded-into>' \
+  --data-urlencode 'query@local-engine/<dir>/<query-file>.rq'
+```
+
 ## Tear down
 
 ```bash
-docker rm -f <dir>-engine
-docker volume rm <dir>-vol   # only if a named volume was used
-docker rmi <dir>-engine-image  # only if the image was built locally
+# every engine of the sitting, whatever <n> reached
+docker rm -f $(docker ps -aq --filter 'name=^<dir>-engine-')
+docker volume rm $(docker volume ls -q --filter 'name=^<dir>-engine-')  # only if named volumes were used
+docker rmi $(docker images -q '<dir>-engine-*-image')  # only if images were built locally
 ```
 
 Every container is ephemeral: destroyed at the end of the sitting that
