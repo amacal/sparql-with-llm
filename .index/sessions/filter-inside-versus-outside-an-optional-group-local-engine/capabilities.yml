@@ -1,0 +1,7 @@
+- "place-filter-inside-or-outside-optional"
+- "translate-group-to-algebra"
+- "trace-left-join-with-expression"
+- "predict-optional-filter-results"
+- "write-sparql-prefix-declarations"
+- "print-query-algebra-with-qparse"
+- "build-fuseki-image-from-maven-artifact"

@@ -1,0 +1,12 @@
+prefix cmp: <http://example.com/company/>
+prefix rel: <http://example.com/relationship/>
+
+select ?person ?age ?employer
+where
+{
+    ?person rel:aged ?age .
+    optional {
+        filter (?age = 20) .
+        ?person rel:worksAt ?employer .
+    }
+}

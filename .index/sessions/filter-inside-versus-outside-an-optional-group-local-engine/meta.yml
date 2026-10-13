@@ -1,0 +1,6 @@
+title: "FILTER Inside Versus Outside an OPTIONAL Group (local-engine)"
+kind: implementation
+status: demonstrated
+target: local-engine
+file: local-engine/filter-optional-scope/
+date: "2026-10-13"

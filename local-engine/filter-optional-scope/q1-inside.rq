@@ -1,0 +1,12 @@
+prefix cmp: <http://example.com/company/>
+prefix rel: <http://example.com/relationship/>
+
+select ?person ?age ?employer
+where
+{
+    ?person rel:aged ?age .
+    optional {
+        filter (?employer = cmp:Tentris) .
+        ?person rel:worksAt ?employer .
+    }
+}

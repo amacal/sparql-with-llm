@@ -1,6 +1,0 @@
-title: "FILTER Inside Versus Outside an OPTIONAL Group (local-engine)"
-status: not-completed
-mentioned_by:
-  - "FILTER and Three-Valued Logic over Unbound Variables (local-engine)"
-evidence:
-  - ".history/2026-10/2026-10-11-filter-and-three-valued-logic-over-unbound-variables-local-engine.yml not_completed: stretch case, the same filter placed inside the OPTIONAL group versus outside it (§6.2, LeftJoin expression), not written"

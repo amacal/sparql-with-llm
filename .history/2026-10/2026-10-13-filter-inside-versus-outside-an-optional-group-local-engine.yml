@@ -1,0 +1,53 @@
+date: "2026-10-13"
+title: "FILTER Inside Versus Outside an OPTIONAL Group (local-engine)"
+session:
+  file: local-engine/filter-optional-scope/
+  status: completed
+  attempted:
+    - "Resolve the FILTER session's deferred stretch case: hand-write a Turtle dataset covering every left-join outcome and compare the same FILTER placed inside an OPTIONAL group versus in the outer group, predicting each result by hand and inspecting the engine's printed algebra"
+  explored:
+    - "Recap of §5.2.2 (filter position within one group does not matter), citing filter-unbound.md"
+    - "SPARQL PREFIX declarations as plain string concatenation, bridged from the Turtle Abbreviations session"
+    - "§6.2 books example, fetched live and quoted verbatim, then a variant with FILTER (?title = \"SPARQL Tutorial\") inside the OPTIONAL used as a prediction test"
+    - "§18.2.2.2, §18.2.2.6 and §18.2.2.7 translation rules, fetched live; the user asked for the pseudo-code to be restated, and the rules were restated in plain language before hand-translating the books variant"
+    - "§18.5 Filter, Diff and LeftJoin definitions, fetched live; W3C errata-query-7 and 7a (the written-in-full third clause should say for all, not there exists)"
+    - "Hypothetical two-price book as the for-all versus there-exists test case"
+    - "Plain-language readings of q1, q2 and q3 as distinct requests, and whether a missing rel:worksAt triple means unemployed"
+  tried:
+    - "Hand-translated the inner OPTIONAL group to Filter(?title = ..., BGP(?x ns:price ?price)), then the full query to LeftJoin over two BGPs with the condition as third argument"
+    - "Ran each query over the SPARQL 1.1 Protocol (POST application/sparql-query), q1 in JSON and q2 to q4 in TSV"
+    - "Printed each query's algebra with Jena's arq.qparse --print=op from the Fuseki server jar"
+    - "Started downloading the separate apache-jena-6.2.0 command-line distribution; not needed once qparse was found in the Fuseki jar"
+  corrections:
+    - "Predicted a FILTER inside an OPTIONAL is evaluated on the inner group's own solutions, so an outer variable like ?title would be unbound there and both books would lose their price; the hand translation showed the condition becomes the LeftJoin's third argument, evaluated on the merged solution, giving book1 with 42 and book2 unbound; the earlier model was restated twice more after the trace before being corrected"
+    - "Predicted a query using an outer-only variable inside an OPTIONAL's FILTER would be rejected at parse time; q4 (FILTER ?age = 20 inside the OPTIONAL) parsed and ran on Fuseki"
+    - "Hand-translated the books variant first as LeftJoin(BGP, Filter(...), true), then with the whole Filter(...) as third argument; corrected to LeftJoin(BGP(title), BGP(price), condition)"
+    - "For a left solution with two compatible matches, one passing and one failing, predicted two rows (the passing merge plus an unbound fallback); corrected via Diff's for-all to one row, consistent with errata-query-7"
+    - "First q3 prediction listed Bob/ID5, Bob/Tentris, Alice and James; a second included a Bob row with employer unbound; corrected to Bob/Tentris, Alice/Tentris and Ben unbound, which the engine confirmed"
+    - "Stated that q1 and q3 return the same data; a side-by-side comparison showed James appears only in q1"
+    - "Chose q2 for 'every person with age, employer only if Tentris'; corrected to q1, since q2 drops Ben and James"
+    - "Described a person with no rel:worksAt triple as unemployed; refined to having no rel:worksAt triple in this dataset"
+  bugs_found:
+    - "data.ttl used the prefix cmp: without declaring it; found by review before loading, fixed by the user adding @prefix cmp:"
+    - "q1 first draft used Turtle @prefix ... . syntax instead of SPARQL PREFIX; fixed by the user"
+    - "q1 first draft made rel:worksAt required and rel:aged optional, which would have removed Ben's no-match case; fixed by the user"
+    - "A q1 edit left ?person ?person rel:aged ?age . and a subjectless rel:worksAt ?employer . pattern; fixed by the user"
+    - "q2 was first saved as q2-inside.rq although its filter was in the outer group; renamed to q2-outside.rq"
+    - "q3 was first saved with a space in its filename, which broke an unquoted shell command; renamed to q3-outside-guarded.rq"
+  completed:
+    - "Wrote local-engine/filter-optional-scope/data.ttl: 8 triples, 4 people with integer ages; Bob works at cmp:ID5 and cmp:Tentris, Alice at cmp:Tentris, Ben has no rel:worksAt, James works at a blank node; Fuseki's GSP dump confirmed 8 triples"
+    - "Wrote q1-inside.rq; predicted 4 rows (Bob/Tentris, Alice/Tentris, Ben and James unbound), matched the JSON result field by field, with Bob appearing exactly once"
+    - "Wrote q2-outside.rq; predicted Bob/Tentris and Alice/Tentris, matched the TSV result"
+    - "Wrote q3-outside-guarded.rq; prediction of Bob/Tentris, Alice/Tentris and Ben unbound matched the TSV result"
+    - "Wrote q4-inside-outer-var.rq; predicted it parses and returns Alice/Tentris with James, Bob and Ben unbound, matched the TSV result"
+    - "Matched the hand translations to qparse output: leftjoin with the condition as third argument for q1 and q4, filter wrapping a condition-free leftjoin for q2 and q3"
+    - "Answered the three-level sign-off: per-query row counts with per-person reasons including Bob's single q1 row, merge-level versus row-level evaluation of the condition, and placement as the choice between keeping every left subject and filtering whole rows, with the bound() guard unable to undo a binding"
+  not_completed: —
+  open_questions: —
+  notes:
+    - "Engine: Apache Jena Fuseki 6.2.0, image built locally from the official Maven artifact jena-fuseki-docker-6.2.0.zip (no official prebuilt image), run with --init, JAVA_OPTIONS=-Xmx512m and --file /data/data.ttl /ds; chosen by a fresh live lookup because qparse --print=op prints the spec algebra, making the filter placement directly visible, and as a third engine after Oxigraph and RDF4J"
+    - "Container filter-optional-scope-engine at bridge IP 172.17.0.4 port 3030; build kit kept under .tmp only"
+    - "Readiness checked with ASK {}; the blank node from [] was stored as _:B335c74333fc08a8df62a8869442eae07"
+    - "Session spanned 2026-10-11 (topic selected and planned) to 2026-10-13 (closed)"
+    - "First queries in this repo using SPARQL PREFIX declarations"
+    - "Row order differed from the predicted order in every query; none used ORDER BY"

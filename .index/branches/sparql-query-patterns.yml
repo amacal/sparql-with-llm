@@ -3,7 +3,7 @@ sessions:
   - "Basic Graph Patterns: A First SELECT Query (local-engine)"
   - "Optional Pattern with an Unbound Variable (local-engine)"
   - "FILTER and Three-Valued Logic over Unbound Variables (local-engine)"
-frontier:
-  - "FILTER and Three-Valued Logic over Unbound Variables (local-engine)"
-explicit_future_targets:
   - "FILTER Inside Versus Outside an OPTIONAL Group (local-engine)"
+frontier:
+  - "FILTER Inside Versus Outside an OPTIONAL Group (local-engine)"
+explicit_future_targets: —
