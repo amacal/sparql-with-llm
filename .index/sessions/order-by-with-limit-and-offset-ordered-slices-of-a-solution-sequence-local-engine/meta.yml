@@ -1,0 +1,6 @@
+title: "ORDER BY with LIMIT and OFFSET: Ordered Slices of a Solution Sequence (local-engine)"
+kind: implementation
+status: demonstrated
+target: local-engine
+file: local-engine/modifier-order-slice/
+date: "2026-10-13"

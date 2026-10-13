@@ -1,0 +1,6 @@
+title: "DISTINCT and Duplicate Solutions after Projection (local-engine)"
+status: not-completed
+mentioned_by:
+  - "ORDER BY with LIMIT and OFFSET: Ordered Slices of a Solution Sequence (local-engine)"
+evidence:
+  - ".history/2026-10/2026-10-13-order-by-with-limit-and-offset-ordered-slices-of-a-solution-sequence-local-engine.yml not_completed: DISTINCT and REDUCED deferred to their own session"

@@ -1,0 +1,12 @@
+prefix rel: <http://example.com/relationship/>
+
+select ?person ?age
+where
+{
+    ?person rel:name ?name .
+    optional {
+        ?person rel:age ?age .
+    }
+}
+order by ?age ?name
+limit 1
