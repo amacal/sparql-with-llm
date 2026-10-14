@@ -92,7 +92,15 @@ docker run --rm -v <dir>-engine-<n>-vol:/in <chosen-engine-image> <engine-subcom
 A persistent store inside such a volume keeps whatever was loaded into it,
 so load the dataset into it exactly once — a second load of the same file
 is not a no-op when the file contains blank nodes (each load mints fresh
-ones), and silently changes what every later query returns.
+ones), and silently changes what every later query returns. When the
+exercise's dataset file changes mid-sitting, the same reasoning means
+starting over rather than loading on top: remove the volume, recreate it,
+and load the new file into the empty store. Some engines make this
+unavoidable anyway — instead of loading into a running server, they build
+an offline index from the dataset file ahead of time and the server only
+reads that index, so restarting the server alone would keep answering from
+the old data; for those, an edited dataset always means rebuilding the
+index from scratch before the next query.
 
 The devcontainer deliberately ships no RDF parser of its own (that would be
 a default tool by the back door), so the engine's loader *is* the dataset's
@@ -129,6 +137,16 @@ from its docs rather than assuming a path). `curl` against that endpoint,
 requesting whichever result format the exercise is using via the `Accept`
 header, is the generic mechanism — no engine-specific client library needed
 for this part.
+
+The Depth principle's internal-mechanism level asks what the engine
+actually did, not only what it returned, so at spin-up also check the
+chosen engine's docs for whether it can report how it evaluated a query —
+an `EXPLAIN`-style plan, a query-execution tree carried in a dedicated
+result format, a request parameter, or a separate CLI subcommand that
+prints the algebra. When it can, fetch that alongside each query's results
+and print it in chat the same way as the results themselves; when it
+can't, say so plainly rather than inferring the plan from output order or
+timing alone.
 
 Some engines only load into a named graph, and what such an engine treats
 as the default graph when a query names none (empty, or the union of every
