@@ -1,0 +1,58 @@
+date: "2026-10-14"
+title: "DISTINCT and Duplicate Solutions after Projection (local-engine)"
+session:
+  file: local-engine/modifier-distinct/
+  status: completed
+  attempted:
+    - "Hand-write a dataset and queries showing projection creating duplicate solutions, then DISTINCT, DISTINCT with ORDER BY and OFFSET/LIMIT, and REDUCED, predicting each result by hand and checking it on one engine"
+  explored:
+    - "Multiset (bag) and per-solution cardinality introduced in plain language, anchored with a generic foaf:knows example (alice and bob know carol, bob knows dave) projected to ?b"
+    - "§15.3, §15.3.1, §15.3.2 and the §18.5 Project/Distinct/Reduced definitions fetched live and quoted verbatim"
+    - "Whether \"09\"^^xsd:integer and \"9\"^^xsd:integer are the same term and the same value, and what DISTINCT must do with them per the spec"
+    - "How to tell load-time canonicalization from value-comparing DISTINCT: lexical forms in a non-DISTINCT run, plus a store dump"
+    - "Sort-based versus hash-based duplicate removal, and which one leaves output sorted"
+    - "QLever execution trees (runtimeInformation.query_execution_tree) for q1-q5, and QLever's index permutations (PSO, POS) as the source of row order"
+    - "Designing a slice that distinguishes Distinct-before-Slice from Slice-before-Distinct by row count"
+    - "Which duplicate the §18.5 Distinct definition keeps when equal solutions sit at different positions of an ordered sequence"
+    - "Why a query writer would choose DISTINCT, REDUCED, or neither"
+  tried:
+    - "Dataset probe pair rel:age 9 versus rel:val \"9\", then rel:jumps \"09\" versus \"9\" as plain strings, then \"09\"^^xsd:integer versus \"9\"^^xsd:integer"
+    - "Built a QLever index with qlever-index from data.ttl in a named volume, served it with qlever-server, checked readiness with ASK {}, and dumped the store with CONSTRUCT as N-Triples"
+    - "Rebuilt the index from scratch (volume removed and recreated) after data.ttl changed"
+    - "Requested application/qlever-results+json alongside application/sparql-results+json to read each query's operator tree"
+  corrections:
+    - "Explained projected rows being kept by solutions still containing two variables; corrected: after projection each solution has only ?b, and rows are kept because Project maps each solution one-to-one so the sequence length is unchanged"
+    - "Used cardinality 3 for the size of the whole multiset; corrected: cardinality is the occurrence count of one solution"
+    - "Said projection increases cardinality because it reduces bound variables; corrected with the dave case: dropping a variable alone does not, only agreement on all kept variables does"
+    - "Probe pairs xsd:integer 9 versus xsd:string \"9\", and \"09\" versus \"9\" as strings, were proposed as term-versus-value probes; corrected: both pairs differ in value as well as term, so neither separates the two comparisons"
+    - "First q1 projected ?employer over data with no shared employer; corrected by adding a second employee of cmp:Tentris"
+    - "Proposed LIMIT 4 for the Distinct-before-Slice test; corrected to OFFSET 4"
+    - "Said q3 needed ORDER BY to make the OFFSET outcome reliable; corrected: the 0-row versus 1-row distinction is order-independent, ORDER BY only fixes which row"
+    - "Said QLever running Distinct before OrderBy changes q3's answer; corrected: 4 rows with OFFSET 4 is empty in any order"
+    - "Said q4 used PSO because of ORDER BY ?person; the execution tree showed POS, with OrderBy as a separate later operator"
+    - "Described load-time canonicalization as producing the same values; corrected: the values were already equal, canonicalization changes lexical form (and here datatype)"
+  bugs_found:
+    - "data.ttl briefly wrote \"09\":integer and \"9\":integer (no ^^ and no xsd prefix declared), invalid Turtle; fixed by the user before any load"
+    - "QLever stored or returned \"09\"^^xsd:integer and \"9\"^^xsd:integer both as \"9\"^^xsd:int, and every integer as xsd:int, in a plain CONSTRUCT dump; documented engine deviation, not resolved"
+  completed:
+    - "Wrote local-engine/modifier-distinct/data.ttl: five rel:worksAt triples (Bob ID5 and Tentris, Alice Tentris, James Microsoft and a blank node) plus rel:jumps integer probes; index log and dump both 16 triples"
+    - "Wrote q1.rq (select ?employer); predicted 5 rows with Tentris twice; observed Tentris, ID5, Tentris, Microsoft, bn1"
+    - "Wrote q2.rq (select distinct); predicted 4 rows; observed ID5, Microsoft, Tentris, bn1"
+    - "Wrote q3.rq (distinct, order by ?person ?employer, offset 4); predicted 0 rows under the spec order versus 1 row if sliced first; observed 0 rows"
+    - "Wrote q4.rq (same with limit 2); derived Tentris, ID5 by hand through OrderBy, Project, Distinct and Slice; observed Tentris, ID5"
+    - "Wrote q5.rq (select reduced); predicted an allowed total of 4 or 5 rows; observed 5 rows, inside the allowed set"
+    - "Read execution trees: q1 and q5 a single PSO scan, q2 Distinct over a POS scan without a Sort, q3 and q4 POS scan then Distinct then OrderBy then the slice"
+    - "Answered the three-level sign-off: per-query results and the dump, projection/Distinct cardinalities and QLever's POS-based Distinct and reordering, and when to choose DISTINCT, REDUCED or neither"
+  not_completed:
+    - "DISTINCT term-versus-value comparison not testable on QLever because the integer probe pair was merged before any query ran"
+    - "Two distinct blank nodes in the same projected column not probed"
+    - "A DESC(?person) variant to try to expose which duplicate Distinct keeps not run"
+    - "No cross-engine run of q4 or q5"
+  open_questions:
+    - "Whether another engine (Tentris was named) keeps \"09\"^^xsd:integer as a separate term, so DISTINCT's term comparison can be observed"
+    - "§18.5 does not say which of two equal solutions Distinct keeps; raised whether ORDER BY on a variable projected away under DISTINCT should be disallowed, as some SQL engines do"
+  notes:
+    - "Engine: QLever (adfreiburg/qlever:latest, digest sha256:709d791af178c6de3d28a13ec0ee8d81a4933500079162b36809aafbf06883b2), chosen by the plan agent's live lookup as actively maintained with claimed full SPARQL 1.1 and automated W3C conformance runs, a sixth engine for the repo, and exposing its execution tree in application/qlever-results+json"
+    - "QLever mechanism: qlever-index -i /data/distinct -f /data/data.ttl -F ttl into a named volume, then qlever-server -i /data/distinct -p 7001 -n; SPARQL endpoint at the server root"
+    - "Dataset reused from local-engine/modifier-order-slice/data.ttl with ppl:Carol removed, then extended by the user"
+    - "First exercise in the repo where the expected result was an allowed set (REDUCED) rather than one exact result"

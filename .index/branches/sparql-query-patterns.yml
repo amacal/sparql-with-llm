@@ -5,9 +5,10 @@ sessions:
   - "FILTER and Three-Valued Logic over Unbound Variables (local-engine)"
   - "FILTER Inside Versus Outside an OPTIONAL Group (local-engine)"
   - "ORDER BY with LIMIT and OFFSET: Ordered Slices of a Solution Sequence (local-engine)"
+  - "DISTINCT and Duplicate Solutions after Projection (local-engine)"
 frontier:
   - "FILTER Inside Versus Outside an OPTIONAL Group (local-engine)"
   - "ORDER BY with LIMIT and OFFSET: Ordered Slices of a Solution Sequence (local-engine)"
-explicit_future_targets:
   - "DISTINCT and Duplicate Solutions after Projection (local-engine)"
+explicit_future_targets:
   - "First Query Against a Remote Public SPARQL Endpoint (remote-endpoint)"

@@ -1,0 +1,6 @@
+title: "DISTINCT and Duplicate Solutions after Projection (local-engine)"
+kind: implementation
+status: demonstrated
+target: local-engine
+file: local-engine/modifier-distinct/
+date: "2026-10-14"

@@ -1,0 +1,9 @@
+prefix rel: <http://example.com/relationship/>
+
+select distinct ?employer
+where
+{
+    ?person rel:worksAt ?employer .
+}
+order by ?person ?employer
+offset 4
