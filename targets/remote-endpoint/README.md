@@ -17,6 +17,13 @@ applies whichever one is chosen:
 - Respect whatever rate-limit or usage-policy page the endpoint publishes
   (fetch it live and actually read it, don't assume); back off and wait
   rather than retrying aggressively on a timeout or a `429`.
+- Never treat "fewer rows than the `LIMIT`" alone as proof a result is
+  complete — a public endpoint may silently cap rows or return partial
+  results on a timeout with a normal `200 OK`. Save every run's full
+  response headers (e.g. `curl -i`) alongside its body under `.tmp/`, and
+  judge completeness by the row count *plus* whatever truncation or timeout
+  signals the chosen endpoint's own documentation names (fetched live, per
+  endpoint — these are vendor conventions, not part of the SPARQL standard).
 - A `SERVICE` call federating out to a *second* public endpoint from within
   a query compounds both endpoints' load and latency — worth doing
   deliberately for what it teaches about federation cost, never by
