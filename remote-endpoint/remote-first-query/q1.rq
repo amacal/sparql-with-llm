@@ -1,0 +1,6 @@
+select ?subject ?predicate ?object
+where
+{
+    ?subject ?predicate ?object .
+}
+limit 10

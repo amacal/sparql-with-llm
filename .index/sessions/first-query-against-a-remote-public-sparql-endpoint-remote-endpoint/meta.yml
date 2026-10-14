@@ -1,0 +1,6 @@
+title: "First Query Against a Remote Public SPARQL Endpoint (remote-endpoint)"
+kind: implementation
+status: demonstrated
+target: remote-endpoint
+file: remote-endpoint/remote-first-query/
+date: "2026-10-14"

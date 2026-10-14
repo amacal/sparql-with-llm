@@ -1,6 +1,0 @@
-title: "First Query Against a Remote Public SPARQL Endpoint (remote-endpoint)"
-status: not-completed
-mentioned_by:
-  - "ORDER BY with LIMIT and OFFSET: Ordered Slices of a Solution Sequence (local-engine)"
-evidence:
-  - ".history/2026-10/2026-10-13-order-by-with-limit-and-offset-ordered-slices-of-a-solution-sequence-local-engine.yml notes: selected and planned as the stepping stone toward a first remote-endpoint session, since that target's query etiquette relies on LIMIT"

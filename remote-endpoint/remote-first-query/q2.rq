@@ -1,0 +1,6 @@
+select ?subject ?predicate
+where
+{
+    ?subject ?predicate "Tentris"@en .
+}
+limit 10

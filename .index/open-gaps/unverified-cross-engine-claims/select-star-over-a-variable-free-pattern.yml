@@ -1,0 +1,5 @@
+claim: "A standards-conforming engine answers SELECT * over a matching variable-free pattern with \"vars\": [] and \"bindings\": [ {} ] (one empty solution), per SPARQL 1.1 Query §16.1.1 and §5.2.1"
+status: "derived from the spec only; the one engine observed (DBpedia, Virtuoso 08.03) instead returned \"vars\": [\"_star_fake\"] with _star_fake bound to \"1\"^^xsd:integer; not yet checked on a second engine"
+evidence:
+  - ".history/2026-10/2026-10-14-first-query-against-a-remote-public-sparql-endpoint-remote-endpoint.yml open_questions and bugs_found"
+  - "remote-endpoint/remote-first-query.md Internal mechanism and Worked example"

@@ -1,0 +1,6 @@
+select ?predicate ?object
+where
+{
+    <http://dbpedia.org/resource/Munich> ?predicate ?object .
+}
+limit 100
