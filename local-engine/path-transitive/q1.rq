@@ -1,0 +1,8 @@
+prefix ppl: <http://example.com/people/>
+prefix rel: <http://example.com/relationship/>
+
+select ?boss
+where
+{
+    { ppl:Monica rel:reportsTo+ ?boss }
+}

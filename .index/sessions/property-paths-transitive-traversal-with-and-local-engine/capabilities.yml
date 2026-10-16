@@ -1,0 +1,7 @@
+- "write-sequence-path-query"
+- "write-transitive-path-query"
+- "rewrite-sequence-path-as-bgp"
+- "predict-path-cardinalities"
+- "trace-alp-by-hand"
+- "choose-transitive-or-fixed-depth-path"
+- "print-optimized-algebra-with-qparse"

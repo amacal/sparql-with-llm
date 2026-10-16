@@ -1,0 +1,6 @@
+title: "Property Paths: Transitive Traversal with + and * (local-engine)"
+kind: implementation
+status: demonstrated
+target: local-engine
+file: local-engine/path-transitive/
+date: "2026-10-16"

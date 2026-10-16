@@ -1,0 +1,28 @@
+@prefix ppl: <http://example.com/people/> .
+@prefix rel: <http://example.com/relationship/> .
+
+ppl:Bob
+    rel:name "Bob" ;
+    rel:age 50 ;
+    rel:reportsTo ppl:Ben .
+
+ppl:Alice
+    rel:name "Alice" ;
+    rel:age 48 ;
+    rel:reportsTo ppl:Bob .
+
+ppl:Ben
+    rel:name "Ben" ;
+    rel:age 30 ;
+    rel:reportsTo ppl:Alice ;
+    rel:reportsTo ppl:Monica .
+
+ppl:Monica
+    rel:name "Monica" ;
+    rel:age 28 ;
+    rel:reportsTo ppl:Bob ;
+    rel:reportsTo ppl:Alice .
+
+ppl:James
+    rel:name "James" ;
+    rel:age 10 .

@@ -1,0 +1,54 @@
+date: "2026-10-16"
+title: "Property Paths: Transitive Traversal with + and * (local-engine)"
+session:
+  file: local-engine/path-transitive/
+  status: completed
+  attempted:
+    - "Hand-write a rel:reportsTo dataset and six queries contrasting the sequence path / with the arbitrary-length paths + and *, predicting each result by hand and checking it on one engine with its printed algebra"
+  explored:
+    - "Opening recap of UNION cardinality: Bob/Tentris stated first as 'seen twice', then as card 1 from each branch summed to 2 after narrowing questions"
+    - "Plain-language definitions of path, start/end node, length and reachable on a chat-only 4-node :next chain"
+    - "§9.1 syntax table, §9.3 equivalent patterns, §9.4 arbitrary length matching, §18.2.2.4 path translation and §18.4 ALP, ZeroOrMorePath and OneOrMorePath fetched raw with curl and quoted verbatim"
+    - "Chat-only symmetric diamond (:a to :b and :c to :d) used to derive the BGP equivalent of :a :next/:next ?x and its mappings before projection"
+    - "Algebra printed by qparse --print=op and --print=opt for q2 and q3"
+    - "ALP traced by hand for ppl:Nobody and for a hypothetical Bob→Ben cycle before running it"
+    - "Design comparison of + against a fixed-depth UNION of one-, two- and three-step sequences"
+  tried:
+    - "First dataset drafts used rel:child and then rel:child plus rel:parent; neither contained two routes to one node from a single start, and the dataset was rewritten around rel:reportsTo"
+    - "q1.rq first saved with rel:worksAt (carried over from an earlier exercise) instead of rel:reportsTo"
+    - "Wrote a three-pattern BGP, then ?a-started two-pattern BGP, before the :a-started equivalent of :a :next/:next ?x"
+  corrections:
+    - "Predicted :a :next/:next ?x on the chat diamond gives one solution; corrected to two ?x = :d rows after listing the two BGP mappings and applying projection"
+    - "Counted the steps of :next/:next as 3 from the number of :next triples in the data; corrected to 2 by reading only the expression in the predicate slot"
+    - "Included subject/object variables (':next ?c') in elt1/elt2; corrected after splitting a triple pattern into subject, predicate and object slots"
+    - "Predicted q1 (Monica rel:reportsTo+) returns Alice once and Bob twice; observed Alice and Bob once each — corrected to: + returns each reachable node once regardless of how many paths lead to it"
+    - "Predicted q6 (ppl:Nobody rel:reportsTo*) returns zero rows because the node is not in the data; observed one row binding ppl:Nobody — corrected via ALP adding the start term to V before eval"
+    - "Described + as 'computing possible paths'; corrected to the set of nodes reachable by at least one path (connectivity)"
+    - "Described + as 'infinite exploration'; corrected to no fixed maximum length with at most one expansion per node on a finite graph"
+    - "Wrote 'triple predicates' for the rewritten sequence path; corrected to triple patterns"
+  bugs_found:
+    - "q1.rq used rel:worksAt, absent from data.ttl, and returned zero bindings; fixed by the user to rel:reportsTo"
+    - "data.ttl line 16 lacked the ';' after rel:reportsTo ppl:Alice; Fuseki logged '[line: 17, col: 5 ] Triples not terminated by DOT' and exited; fixed by the user"
+    - "data.ttl line 7 read 'rel.reportsTo'; Fuseki logged '[line: 7, col: 5 ] Triples not terminated by DOT' and exited; fixed by the user to rel:reportsTo"
+  completed:
+    - "Wrote local-engine/path-transitive/data.ttl in three versions: A with Alice→Bob, Ben→Alice, Monica→Bob, Monica→Alice (14 triples), B adding Ben→Monica (15), C adding Bob→Ben (16); each count confirmed by a GSP dump"
+    - "q1.rq on version A: observed Alice, Bob (2 rows)"
+    - "q2.rq (Ben rel:reportsTo/rel:reportsTo) on version B: predicted Bob x2, Alice x1; observed Bob, Alice, Bob"
+    - "q3.rq (Ben rel:reportsTo+) on version B: predicted Alice, Monica, Bob once each; observed Alice, Bob, Monica"
+    - "q4.rq (Ben rel:reportsTo*) on version B: predicted Alice, Monica, Bob, Ben; observed Ben, Alice, Bob, Monica"
+    - "q5.rq (James rel:reportsTo*) on version B: predicted James; observed James"
+    - "q6.rq (ppl:Nobody rel:reportsTo*) on version B: observed the single binding ppl:Nobody (prediction recorded under corrections)"
+    - "q3.rq rerun on version C: predicted Alice, Bob, Monica, Ben once each; observed Alice, Bob, Ben, Monica"
+    - "Matched q2's --print=opt output (bgp with hidden ??P0 under project) and q3's (path+ unchanged) against the §18.2.2.4 translation"
+    - "Answered the three-level sign-off: per-query rows reconstructed from the three data versions, the bgp/project versus ALP mechanism, and when to choose + / * versus explicit / sequences"
+  not_completed:
+    - "Inverse ^, alternative |, zero-or-one ? and negated property set ! were named from the §9.1 table but not exercised"
+    - "The both-variables case ?x rel:reportsTo* ?y, which ranges over nodes(G), was read in §18.4 but not run"
+    - "The fixed-depth UNION alternative to q3 was reasoned through but not written or run"
+  open_questions: —
+  notes:
+    - "Engine: Apache Jena Fuseki 6.2.0, image built locally from the official Maven artifact jena-fuseki-docker-6.2.0.zip (SHA-1 verified) and tagged path-transitive-engine-1-image, run with --init, JAVA_OPTIONS=-Xmx512m and --file /data/data.ttl /ds; chosen by the plan agent's fresh live lookup because arq.qparse prints algebra, a deliberate third Fuseki session (RDF4J 6.1.0 and Oxigraph 0.5.11 also checked)"
+    - "Select agent offered: Property Paths: Transitive Traversal with + and * (local-engine); GROUP BY and COUNT: Aggregating Solutions into Groups (local-engine); Named Graphs and Quads: N-Quads and TriG (formats); SPARQL Result Formats: What JSON, XML, CSV and TSV Each Preserve (formats); Language-Tagged Labels with lang() and langMatches() (remote-endpoint); chosen: the first"
+    - "qparse --print=op kept q2 as (path ppl:Ben (seq ...) ?boss); --print=opt, not listed in --help, flattened it to a bgp with ??P0; output captured via files inside the container"
+    - "The §18.2.2.4 translation table on the fetched page prints the sequence row as 'X P ?V . ?V Q P'; its worked example shows ?V :q ?o"
+    - "Dataset vocabulary (ppl:/rel: prefixes and the five people) carried over from the user's earlier local-engine exercises"
