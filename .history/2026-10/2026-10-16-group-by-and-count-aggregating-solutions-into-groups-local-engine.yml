@@ -1,0 +1,59 @@
+date: "2026-10-16"
+title: "GROUP BY and COUNT: Aggregating Solutions into Groups (local-engine)"
+session:
+  file: local-engine/agg-group-count/
+  status: completed
+  attempted:
+    - "Hand-write a dataset and eleven aggregate queries covering GROUP BY with COUNT(?x), COUNT(*) and COUNT(DISTINCT ?x), join inflation, the implicit single group, zero-match grouping, an unbound grouping key and the projection restriction, predicting each result by hand and checking it on one engine with its printed algebra"
+  explored:
+    - "Warm-up recap checks on cardinality, an unbound variable inside an expression, join compatibility, and the empty group { } producing one empty mapping (rebuilt via a variable-free triple pattern)"
+    - "Chat-only foaf:knows example (alice, bob, carol, dave) bucketed by ?x before any GROUP BY syntax, and why dave forms no bucket"
+    - "§11, §11.1 (book/price example traced by hand to org1 -> [9, 5, 7], org2 -> [7]), §11.4, §18.2.4.1, and the §18.5.1 Group, ListEval, Aggregation and Count definitions fetched live and quoted verbatim"
+    - "W3C SPARQL 1.1 errata entry errata-query-21 and A. Seaborne's linked note 'SPARQL Grouping and Aggregation with no matches' fetched live and quoted"
+    - "qparse --print=op algebra for q1, q2 and q7: group / extend / project, Jena's ?.0 as the spec's temporary agg-i variable, group () as the implicit group"
+    - "Why ListEval is used both for the group key (GROUP BY list) and for M(Omega) (aggregate argument)"
+    - "q8 compared against the literal SPARQL 1.1 Group formula (zero rows) and the intent recorded in W3C errata-query-21 (one row); Fuseki returned one row with 0, matching the errata intent"
+    - "Design alternatives for counting two multi-valued properties: COUNT(DISTINCT) after the join versus aggregating each property separately and joining the counts"
+  tried:
+    - "q1 written with COUNT(?employer) instead of the suggested COUNT(*); kept, since a required pattern makes them equal"
+    - "q4 reused one ?employer variable in both the rel:worksAt and rel:employeeOf patterns, which asks for the same company in both roles; rewritten as q5 with separate variables"
+    - "q3 result fetched as CSV rather than JSON, so its count datatype was not visible in that run"
+  corrections:
+    - "Described a solution's cardinality as the number of compatible solutions; corrected to the number of occurrences of the identical mapping in the multiset"
+    - "Described a join as all possible combinations of both sets; corrected to the pairs of compatible mappings, with an incompatible ?p value as the counterexample"
+    - "Predicted the empty group { } returns no solutions, then all solutions; corrected to exactly one empty mapping, independent of the data"
+    - "Described the solution of a variable-free matching pattern as the matched triple (bob, knows, ann); corrected to the empty mapping with zero pairs"
+    - "Wrote Ben's q2 solution with ?age -> 40; corrected to { ?person -> ppl:Ben, ?name -> \"Ben\" } with ?employer absent"
+    - "Predicted q5 gives Bob 2 and 2; observed 4 and 4, from the 2 x 2 join of his worksAt and employeeOf values"
+    - "Wrote M(Omega) for Bob's q5 group first as the group's solutions, then as {1,1,1,1}; corrected to the evaluated ?employer1 values {(ID5),(ID5),(Tentris),(Tentris)}"
+    - "Described COUNT(*) in q7 as counting matched triples; corrected to counting the solutions in the group"
+    - "Reasoned that the Group formula with no GROUP BY puts all solutions into one empty group; corrected: the literal SPARQL 1.1 formula builds one key per solution, so an empty solution sequence yields no keys and zero rows"
+    - "First q10 prediction included employeeOf companies (Microsoft, blank node); re-derived from the query's rel:worksAt pattern only"
+    - "Predicted q10 skips Ben and James; observed one extra row with no employer key and count 2, their shared (error) group key"
+    - "Gave q10 group keys as (Alice) and (Ben, Ben); corrected to the value of the GROUP BY expression ?employer per solution"
+  bugs_found: —
+  completed:
+    - "Wrote local-engine/agg-group-count/data.ttl: 18 triples, five people; Bob 2 worksAt and 2 employeeOf, Alice 1 worksAt, Monica 1 worksAt and a blank-node employeeOf, Ben employeeOf only, James neither; GSP dump 18 triples matching the file"
+    - "q1: predicted and observed 3 rows, Bob 2, Alice 1, Monica 1, xsd:integer counts"
+    - "q2 (OPTIONAL, COUNT(?employer)): predicted and observed 5 rows, adding Ben 0 and James 0"
+    - "q3 (COUNT(*)): predicted and observed Ben 1 and James 1, others unchanged"
+    - "q4 (shared ?employer): predicted and observed Bob 2 only"
+    - "q5 (separate variables): observed Bob 4/4 and Monica 1/1 against a prediction of Bob 2/2; diagnosed as join multiplication"
+    - "q6 (COUNT(DISTINCT)): predicted and observed Bob 2/2, Monica 1/1"
+    - "q7 (no GROUP BY): predicted and observed one row n = 4; algebra group () with (count)"
+    - "q8 (no GROUP BY, unmatched rel:worksAt2): predicted and observed one row n = 0"
+    - "q9 (GROUP BY ?person, unmatched): predicted and observed zero rows with head.vars [person, n]"
+    - "q10 (GROUP BY ?employer over OPTIONAL): observed ID5 1, Tentris 2, Oracle 1 and a row with no employer key and rows 2"
+    - "q11 (projecting non-grouped ?name): predicted rejection; observed HTTP 400 'Parse error: Non-group key variable in SELECT: ?name'"
+    - "Answered the three-level sign-off: per-case observable results, the q2 leftjoin/group/extend/project trace, and the OPTIONAL plus COUNT(?x) design for counts including zero"
+  not_completed:
+    - "HAVING was planned as a stretch step and not reached"
+    - "Counting two multi-valued properties per person without join inflation, by aggregating each separately and joining the counts (subqueries), was proposed but not written"
+    - "Whether COUNT(DISTINCT) compares terms or values (e.g. \"09\" versus \"9\") was not tested"
+  open_questions:
+    - "Whether a second engine also returns one row with 0 for COUNT(*) without GROUP BY over a pattern with no matches (q8), given the literal SPARQL 1.1 Group definition yields zero rows"
+  notes:
+    - "Engine: Apache Jena Fuseki 6.2.0, image built locally from the official Maven artifact jena-fuseki-docker-6.2.0.zip and tagged agg-group-count-engine-1-image, run with --init, JAVA_OPTIONS=-Xmx512m and --file /data/data.ttl /ds; chosen by the plan agent's fresh live lookup because arq.qparse --print=op prints group/extend/project directly (Oxigraph 0.5.11, RDF4J and QLever also checked)"
+    - "Select agent offered: GROUP BY and COUNT: Aggregating Solutions into Groups (local-engine); CONSTRUCT: Building a New RDF Graph from Query Solutions (local-engine); Named Graphs and Quads: N-Quads and TriG (formats); SPARQL Result Formats: What JSON, XML, CSV and TSV Each Preserve (formats); Language-Tagged Labels with lang() and langMatches() (remote-endpoint); chosen: the first"
+    - "The java binary in the built image is at /opt/java-minimal/bin/java, not on PATH; qparse output files inside the container were sometimes still empty when docker exec returned and had content about a second later, so they were copied out with docker cp after a short wait"
+    - "Dataset vocabulary (ppl:/cmp:/rel: prefixes and the five people) carried over from the user's earlier local-engine exercises and extended with a blank-node object"

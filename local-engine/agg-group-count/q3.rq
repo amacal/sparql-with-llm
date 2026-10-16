@@ -1,0 +1,9 @@
+prefix rel: <http://example.com/relationship/>
+
+select ?person (count(*) as ?rows)
+where
+{
+    ?person rel:name ?name .
+    optional { ?person rel:worksAt ?employer }
+}
+group by ?person

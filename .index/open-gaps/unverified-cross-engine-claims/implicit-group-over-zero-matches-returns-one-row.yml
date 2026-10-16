@@ -1,0 +1,5 @@
+claim: "SELECT (COUNT(*) AS ?n) with no GROUP BY over a pattern with no matches returns one row with ?n = 0, the intent recorded in W3C SPARQL 1.1 errata-query-21, although the literal §18.5.1 Group definition yields zero rows"
+status: "observed on one engine (Apache Jena Fuseki 6.2.0, one row with 0); not yet checked on a second engine"
+evidence:
+  - ".history/2026-10/2026-10-16-group-by-and-count-aggregating-solutions-into-groups-local-engine.yml open_questions and completed (q8)"
+  - "local-engine/agg-group-count.md Edge cases"

@@ -1,0 +1,8 @@
+title: "Aggregation and Grouping"
+sessions:
+  - "GROUP BY and COUNT: Aggregating Solutions into Groups (local-engine)"
+frontier:
+  - "GROUP BY and COUNT: Aggregating Solutions into Groups (local-engine)"
+explicit_future_targets:
+  - "HAVING: Filtering Aggregated Groups (local-engine)"
+  - "Subqueries: Counting Two Multi-Valued Properties Without Join Inflation (local-engine)"

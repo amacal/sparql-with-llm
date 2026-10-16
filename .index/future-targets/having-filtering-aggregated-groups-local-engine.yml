@@ -1,0 +1,6 @@
+title: "HAVING: Filtering Aggregated Groups (local-engine)"
+status: not-completed
+mentioned_by:
+  - "GROUP BY and COUNT: Aggregating Solutions into Groups (local-engine)"
+evidence:
+  - ".history/2026-10/2026-10-16-group-by-and-count-aggregating-solutions-into-groups-local-engine.yml not_completed: HAVING was planned as a stretch step and not reached"

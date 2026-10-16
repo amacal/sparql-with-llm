@@ -1,0 +1,6 @@
+title: "GROUP BY and COUNT: Aggregating Solutions into Groups (local-engine)"
+kind: implementation
+status: demonstrated
+target: local-engine
+file: local-engine/agg-group-count/
+date: "2026-10-16"
