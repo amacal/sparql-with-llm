@@ -150,8 +150,15 @@ timing alone. A plan or algebra CLI run through `docker exec` can come
 back with no output at all — not even from a later command in the same
 `sh -c` — without having failed; before concluding the engine can't
 print one, run it with stdin closed (`</dev/null`) and its output
-redirected to a file inside the container, then read that file back with
-a separate `docker exec`.
+redirected to a file inside the container, then read that file back —
+copying it out with `docker cp` when a separate `docker exec` `cat` also
+prints nothing. That file can still be empty for a moment after
+`docker exec` returns, so poll until its size is non-zero before reading
+it rather than taking an empty file as the engine's answer. And when the
+CLI itself seems to be missing, look inside the image before concluding
+so: a minimal image built from an engine's own kit may ship its runtime
+(and with it the CLI's launcher) outside `PATH`, reachable only by its
+full path.
 
 Some engines only load into a named graph, and what such an engine treats
 as the default graph when a query names none (empty, or the union of every
