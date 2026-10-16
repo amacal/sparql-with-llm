@@ -154,7 +154,7 @@ directory_layout:
     fields_in_order: [concept, due_date, status, task, result]
     field_notes:
       concept: "exact Concept Title this check tests retention of, double-quoted — must resolve to an existing sessions/*/meta.yml title"
-      due_date: "YYYY-MM-DD, double-quoted — roughly 1-2 weeks after the original session, a judgment call stated explicitly at write time, never a mechanical formula"
+      due_date: "YYYY-MM-DD, double-quoted — roughly 1-2 weeks after the original session, a judgment call stated explicitly at write time, never a mechanical formula; closely-linked concepts deliberately share one due date so they're taken together in one sitting (see CLAUDE.md's 'Retention checks')"
       status: "pending | passed | failed"
       task: "— while pending; once resolved, a one-line factual description of the actual new task used to test retention (a different dataset or query shape than the original exercise used, per CLAUDE.md)"
       result: "— while pending; once resolved, a one-line factual outcome"

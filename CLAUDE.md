@@ -263,7 +263,11 @@ exercise's notes file and with hints withheld more strictly than usual (the
 point is finding out what actually stuck, not re-teaching it under a
 different name). It's verified the exact same way every other exercise here
 is — the hand-derived expected result compared field-by-field against the
-actual one, never a softer bar just because it's a review.
+actual one, never a softer bar just because it's a review. Checks on
+closely-linked concepts share one due date and are taken together, as one
+task that genuinely exercises each of them — every concept still judged and
+recorded passed or failed on its own — so a cluster of foundations costs one
+sitting rather than one sitting each.
 
 Passing updates that concept's `.index/sessions/<slug>/meta.yml` `status`
 field from `demonstrated` to `retained` (see "Fast index"). Failing doesn't
