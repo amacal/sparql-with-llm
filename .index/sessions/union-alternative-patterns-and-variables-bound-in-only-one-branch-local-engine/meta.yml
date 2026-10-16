@@ -1,0 +1,6 @@
+title: "UNION: Alternative Patterns and Variables Bound in Only One Branch (local-engine)"
+kind: implementation
+status: demonstrated
+target: local-engine
+file: local-engine/union-alternatives/
+date: "2026-10-16"

@@ -1,0 +1,51 @@
+date: "2026-10-16"
+title: "UNION: Alternative Patterns and Variables Bound in Only One Branch (local-engine)"
+session:
+  file: local-engine/union-alternatives/
+  status: completed
+  attempted:
+    - "Hand-write a dataset and three queries combining two alternative predicates with UNION (shared variable, separate variables, and joined to a required pattern), predicting each result by hand and checking it on one engine with its printed algebra"
+  explored:
+    - "Chat-only 4-triple example (alice/bob/carol with src1:name and src2:name) used to motivate an OR over two patterns before any syntax"
+    - "Why two triple patterns in one group act as an AND: only carol survives, and a different literal per source (\"Carol\"/\"Caroline\") would drop her too"
+    - "§7 Matching Alternatives, §18.5 Union and Join definitions, and §18.3 compatible mappings fetched live and quoted verbatim"
+    - "Cardinality as the count of one solution within one specific multiset, worked through on the (carol, \"Carol\") row"
+    - "Compatibility tested on the pair {person alice, name \"Alice\"} and {person alice, age 30}, and whether their merge is in either input"
+    - "Algebra printed by qparse --print=op for q1, q2 and q3, and the predicted algebra of the same two triple patterns without UNION"
+    - "Two causes of an unbound variable compared: the producing UNION branch never mentions it versus OPTIONAL finding no compatible match in the data"
+    - "Join over UNION versus a required pattern followed by two OPTIONALs, and a shared company variable versus one variable per branch"
+  tried:
+    - "Intuition attempts before UNION: listing subjects and objects separately, a single fixed predicate (?s name: ?o), and a variable predicate (?s ?p ?o)"
+    - "First UNION written in chat without braces around each alternative, then rewritten with them"
+    - "q1.rq first saved with a Turtle-style trailing dot on the PREFIX line"
+    - "Dataset predicate rel:employerOf renamed to rel:employeeOf mid-session; the engine was restarted from scratch and the store dumped again"
+  corrections:
+    - "Described Union as concatenation; refined to: multiset union with no compatibility check, no merge, cards added, no order guaranteed"
+    - "Described Join as union with deduplication, then as intersection; corrected with the alice name/age pair, whose merge is a row in neither input"
+    - "Stated compatibility as having the same number of variables and matching values; corrected to: only variables in both domains are compared"
+    - "Judged {person alice, name \"Alice\"} and {person alice, age 30} incompatible; corrected: they share only ?person and agree on it"
+    - "Counted (carol, \"Carol\") as occurring 0 times in the left list; recounted as 1 after card was defined in plain language"
+    - "Wrote the merged row's ?name as the IRI alice; corrected to the literal \"Alice\""
+    - "Predicted q3's algebra as a bgp containing the union; corrected to a join of the age bgp with the union (no JOIN keyword, §18.2.2.6 translation)"
+    - "First q3 row prediction included Alice and Monica; corrected after listing the age pattern's own solutions (Bob, Ben, James) as the join's left input"
+    - "Attributed Alice's unbound ?employer2 in q2 to her having no employeeOf triple; corrected: Bob's worksAt rows also lack it, because the left branch's pattern never mentions ?employer2"
+    - "Described q2 as returning exactly the same 8 rows as q1; corrected: same count, different solutions, every q2 row with card 1"
+  bugs_found:
+    - "q1.rq's PREFIX line ended with a Turtle-style dot; Fuseki returned 'Parse error: Encountered \" \".\" \". \"\" at line 1, column 48.'; fixed by the user removing the dot"
+  completed:
+    - "Wrote local-engine/union-alternatives/data.ttl: 16 triples, five people; Alice worksAt only, Ben employeeOf only, Bob both predicates with the same companies (ID5, Tentris), Monica both with different companies, James neither; rel:age for Bob, Ben, James; GSP dump 16 triples before and after the predicate rename"
+    - "Wrote q1.rq (shared ?employer); predicted 8 rows with (Bob, ID5) and (Bob, Tentris) twice and James absent; observed exactly that, all worksAt rows before all employeeOf rows"
+    - "Wrote q2.rq (?employer1 / ?employer2); predicted 8 rows each card 1 with the unbound variable's key absent; observed exactly that, head.vars listing all three variables"
+    - "Wrote q3.rq (rel:age required before the UNION); predicted (Bob, 30, ID5) x2, (Bob, 30, Tentris) x2, (Ben, 40, Microsoft); observed exactly those 5 rows with xsd:integer ages"
+    - "Matched q1, q2 and q3 against qparse output: union of two bgps under project, and join of the age bgp with the union for q3"
+    - "Answered the three-level sign-off: per-query results, the union/join/project trace with Bob's card 2 as 1 * 2, and the UNION-versus-OPTIONAL and shared-versus-separate-variable tradeoffs"
+  not_completed:
+    - "A DISTINCT variant of q1 was planned as optional and not written"
+    - "The two-OPTIONAL alternative to q3 was reasoned through but not written or run"
+    - "The two triple patterns without UNION (single bgp) were predicted but not run"
+  open_questions:
+    - "How two OPTIONALs sharing one ?employer variable behave, given the second must be compatible with the first's binding (raised, not resolved)"
+  notes:
+    - "Engine: Apache Jena Fuseki 6.2.0, image built locally from the official Maven artifact jena-fuseki-docker-6.2.0.zip and tagged union-alternatives-engine-1-image, run with --init, JAVA_OPTIONS=-Xmx512m and --file /data/data.ttl /ds; chosen by a fresh live lookup because arq.qparse --print=op prints the spec algebra, reused deliberately as UNION semantics are fully specified and need no cross-engine comparison"
+    - "arq.qparse run via docker exec printed nothing to the exec's own output, and later commands in the same sh -c printed nothing either; it worked by redirecting to a file inside the container with stdin from /dev/null and reading the file with a second docker exec"
+    - "Dataset vocabulary (ppl:/cmp:/rel: prefixes, Bob, Alice, Ben, James, cmp:ID5, cmp:Tentris) carried over from the user's own local-engine/filter-optional-scope/data.ttl and extended"

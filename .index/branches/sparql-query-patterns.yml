@@ -6,8 +6,9 @@ sessions:
   - "FILTER Inside Versus Outside an OPTIONAL Group (local-engine)"
   - "ORDER BY with LIMIT and OFFSET: Ordered Slices of a Solution Sequence (local-engine)"
   - "DISTINCT and Duplicate Solutions after Projection (local-engine)"
+  - "UNION: Alternative Patterns and Variables Bound in Only One Branch (local-engine)"
 frontier:
   - "FILTER Inside Versus Outside an OPTIONAL Group (local-engine)"
   - "ORDER BY with LIMIT and OFFSET: Ordered Slices of a Solution Sequence (local-engine)"
-  - "DISTINCT and Duplicate Solutions after Projection (local-engine)"
+  - "UNION: Alternative Patterns and Variables Bound in Only One Branch (local-engine)"
 explicit_future_targets: —

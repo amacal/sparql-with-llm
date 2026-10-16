@@ -1,0 +1,7 @@
+- "write-union-query"
+- "predict-union-cardinalities"
+- "trace-join-over-union"
+- "distinguish-union-from-optional-unbound"
+- "choose-shared-or-separate-branch-variables"
+- "print-query-algebra-with-qparse"
+- "build-fuseki-image-from-maven-artifact"
