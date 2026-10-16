@@ -146,7 +146,12 @@ result format, a request parameter, or a separate CLI subcommand that
 prints the algebra. When it can, fetch that alongside each query's results
 and print it in chat the same way as the results themselves; when it
 can't, say so plainly rather than inferring the plan from output order or
-timing alone.
+timing alone. A plan or algebra CLI run through `docker exec` can come
+back with no output at all — not even from a later command in the same
+`sh -c` — without having failed; before concluding the engine can't
+print one, run it with stdin closed (`</dev/null`) and its output
+redirected to a file inside the container, then read that file back with
+a separate `docker exec`.
 
 Some engines only load into a named graph, and what such an engine treats
 as the default graph when a query names none (empty, or the union of every
