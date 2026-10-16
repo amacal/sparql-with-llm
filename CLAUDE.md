@@ -127,7 +127,9 @@ hardcoded technology").
   context the spec provides rather than the answer: a condensed excerpt
   fetched live from the current W3C SPARQL 1.1 Query Language Recommendation
   (`https://www.w3.org/TR/sparql11-query/`), quoted verbatim from what was
-  actually fetched that moment, never reworded or invented from memory —
+  actually fetched that moment — the raw page itself (e.g. `curl` with tags
+  stripped), never a fetch tool that hands back a model's summary of the
+  page instead of its text — never reworded or invented from memory —
   listing only the exact grammar/semantics the current step needs, never
   composed query content. When the question is about a specific engine's
   own behavior rather than the standard itself (an extension function, an
