@@ -176,6 +176,40 @@ curl -s http://<engine-ip>:<port>/<endpoint-path> \
   --data-urlencode 'query@local-engine/<dir>/<query-file>.rq'
 ```
 
+## Run the panel
+
+Every exercise runs one primary engine plus a silent panel (see CLAUDE.md's
+"Cross-engine and cross-format comparison"), numbered by the same `<n>` as
+above: `1` is the primary, `2` and up are the panel. Each panel engine is
+spun up, loaded exactly once, and dump-checked against the dataset file
+the same way as the primary — a panel engine's differing stored data (a
+canonicalized literal, a narrower integer datatype) is itself a
+disagreement worth surfacing, not just its query results.
+
+Once they're all up, write one small helper under `.tmp/panel/` — never a
+tracked path — that takes a query file and, for each engine number given
+(all of them by default), sends it over the SPARQL 1.1 Protocol to that
+engine's own endpoint and prints the HTTP status followed by either the
+error body or a normalized result: the variable list, then one line per
+solution with every term's type and datatype or language tag shown and an
+unbound variable marked explicitly, the lines sorted so that an engine's
+own result order (unspecified without `ORDER BY`) never reads as a
+disagreement. Engine IPs and endpoint paths go in a separate file the
+helper reads, refreshed whenever a container is recreated:
+
+```bash
+.tmp/panel/run.sh local-engine/<dir>/<query-file>.rq          # every engine
+.tmp/panel/run.sh local-engine/<dir>/<query-file>.rq 2 3      # just these
+```
+
+Compare every engine's output both against the hand-derived expected
+result and against the primary's. When all of them agree, only the
+primary's output goes into chat; when any engine differs or breaks the
+spec, paste every engine's output for that query verbatim. A query whose
+point is the ordering itself (`ORDER BY` with `LIMIT`) needs the helper's
+sorting turned off for that run, or the very thing being checked is
+erased.
+
 ## Tear down
 
 ```bash
