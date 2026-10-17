@@ -1,0 +1,10 @@
+prefix rel: <http://example.com/relationship/>
+
+select ?person (count(?employer) as ?employers) (count(*) as ?rows)
+where
+{
+    filter (count(?employer) > 1) .
+    ?person rel:name ?name .
+    optional { ?person rel:worksAt ?employer }
+}
+group by ?person

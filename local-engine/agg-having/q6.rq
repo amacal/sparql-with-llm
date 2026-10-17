@@ -1,0 +1,8 @@
+prefix rel: <http://example.com/relationship/>
+
+select (count(*) as ?rows)
+where
+{
+    ?person rel:namex ?name .
+}
+having (count(*) = 0)

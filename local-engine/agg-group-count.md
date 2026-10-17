@@ -30,7 +30,7 @@ The question "how many employers does each person have, including people with no
 
 ## Edge cases
 
-The implicit group over zero matches is a genuine defect in the 1.1 text. Read literally, Group iterates over the solutions in Ω, so an empty Ω produces no key, no group and zero rows. W3C's errata entry query-21, with Andy Seaborne's linked note, records this and states the intent of one row with Count({}) = 0, which is what Fuseki returned for `q8`. With an explicit `GROUP BY` (`q9`) there really is no group, Count is never called, and zero rows is the intended answer. This was observed on one engine only. The second edge case is grouping by a sometimes-unbound variable. Ben's and James's keys are both `(error)`, equal keys share a group, and the specification removes error values "at projection time", which removes the pair but keeps the row.
+The implicit group over zero matches is a genuine defect in the 1.1 text. Read literally, Group iterates over the solutions in Ω, so an empty Ω produces no key, no group and zero rows. W3C's errata entry query-21, with Andy Seaborne's linked note, records this and states the intent of one row with Count({}) = 0, which is what Fuseki returned for `q8`. With an explicit `GROUP BY` (`q9`) there really is no group, Count is never called, and zero rows is the intended answer. This was observed on one engine only here; `agg-having.md` later observed the same one-row result on five engines. The second edge case is grouping by a sometimes-unbound variable. Ben's and James's keys are both `(error)`, equal keys share a group, and the specification removes error values "at projection time", which removes the pair but keeps the row.
 
 ## Worked example
 

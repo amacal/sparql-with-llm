@@ -1,0 +1,5 @@
+claim: "An aggregate inside a WHERE FILTER, which the SPARQL 1.1 grammar notes forbid (\"Aggregate functions may only be used in SELECT, HAVING and ORDER BY clauses\"), should be rejected at parse time, but some engines accept it and return an empty result"
+status: "observed on five engines in one sitting: Tentris v1.4.0, Fuseki 6.2.0 and QLever reject with HTTP 400; Oxigraph 0.5.11 and RDF4J 6.1.0 return HTTP 200 with zero rows (Oxigraph's plan places the Filter below Aggregate on an unbound hidden variable); whether RDF4J's zero rows arise the same way is not observed, as no RDF4J plan was fetched"
+evidence:
+  - ".history/2026-10/2026-10-17-having-filtering-aggregated-groups-local-engine.yml corrections and bugs_found (q3)"
+  - "local-engine/agg-having.md Engine panel outcomes and Internal mechanism"

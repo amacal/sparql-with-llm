@@ -1,0 +1,5 @@
+claim: "A SELECT alias referenced in HAVING is not visible there per SPARQL 1.1 §18.2.4.2, and §18.2.4.1 rewrites it to Sample(alias), which is Sample({}) = error, so HAVING (?alias > n) drops every group; engines diverge from this"
+status: "observed on five engines in one sitting: Oxigraph 0.5.11 returns zero rows (spec-literal); Tentris v1.4.0 rejects with a parse error (non-aggregated variable not part of the group key); Fuseki 6.2.0, RDF4J 6.1.0 and QLever evaluate the alias as the aggregate (SQL-style) and keep the matching group"
+evidence:
+  - ".history/2026-10/2026-10-17-having-filtering-aggregated-groups-local-engine.yml corrections (q4)"
+  - "local-engine/agg-having.md Engine panel outcomes and Worked example"

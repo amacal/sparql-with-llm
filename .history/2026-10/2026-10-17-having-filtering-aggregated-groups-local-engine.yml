@@ -1,0 +1,58 @@
+date: "2026-10-17"
+title: "HAVING: Filtering Aggregated Groups (local-engine)"
+session:
+  file: local-engine/agg-having/
+  status: completed
+  attempted:
+    - "Hand-write six queries over a reused dataset covering HAVING on an aggregate, an aggregate in a WHERE FILTER, a SELECT alias inside HAVING, and HAVING with implicit grouping over matching and non-matching patterns, predicting each result by hand and checking it on a primary engine plus a silent four-engine panel"
+  explored:
+    - "Recap checks: FILTER keeps only T (with !bound(?x) as the way to keep unbound rows), and COUNT(*) counts the solutions in a group"
+    - "§11.3, §18.2.4.1, §18.2.4.2, §18.2.4.4 and §18.5.1.8 (Sample), grammar rules [21], [22], [69], [120], [121] and the §19.8 grammar note on where aggregates may appear, all fetched live from the raw W3C page and quoted verbatim"
+    - "Chat-only foaf:knows example: groups :ann 2, :bob 1, :dan 3 under HAVING(COUNT(*) > 1)"
+    - "Order of WHERE FILTER, grouping and HAVING filter, and what a single solution can and cannot see"
+    - "Oxigraph query --explain trees for q2 and q3, including the direction solutions flow through a plan tree"
+    - "Chat-only SAMPLE example (:ann with two nicks, :bob with none) before applying the Sample rewrite to q4"
+    - "Why explicit GROUP BY over zero solutions gives zero groups while the implicit group's constant key gives one row"
+  tried:
+    - "q1 first written with count(1) instead of count(*); changed to count(*)"
+    - "q2 first written as `having count(?employer) > 1` without brackets; Oxigraph returned HTTP 400; bracketed form used"
+    - "q3 (aggregate inside a WHERE FILTER) run on all five engines"
+    - "q4 first written with `having (?employer > 1)` (the WHERE variable); changed to the alias ?employers"
+    - "q5 first projected ?person alongside count(*) with no GROUP BY; all five engines returned HTTP 400; ?person removed"
+    - "q6 first kept `having (count(*) > 3)`, which returns zero rows whether or not the implicit group exists; changed to `= 0`"
+    - "An ad-hoc copy of q6 without the HAVING line was run on all five engines (not saved in the exercise)"
+  corrections:
+    - "Predicted Monica's COUNT(?employer) as 0; corrected to 1 from her rel:worksAt cmp:Oracle triple"
+    - "Described FILTER as working with triple patterns; restated as evaluating once per solution and returning the solutions whose expression is T"
+    - "Read Oxigraph's plan as passing a binding down from Extend to Filter; corrected: solutions flow upward, the hidden variable is first bound by Aggregate, and an operation sees only variables bound below it"
+    - "Predicted q3 is a parse error; observed HTTP 200 with zero rows on Oxigraph and RDF4J and HTTP 400 on Tentris, Fuseki and QLever; diagnosed from the Oxigraph plan as a Filter below Aggregate testing an unbound hidden variable"
+    - "Predicted q4 returns Bob; observed zero rows on Oxigraph, a parse error on Tentris and Bob on Fuseki, RDF4J and QLever; corrected via the §18.2.4.1 Sample rewrite and Sample({}) = error to the specification's zero rows"
+    - "Described SAMPLE over a group with no ?employers value as unbound or error; corrected to Sample({}) = error"
+    - "Stated that Tentris's q4 parse error is the correct behaviour; corrected: the Sample rewrite makes the query legal, so the specification gives zero rows"
+    - "Explained q5's rejection as HAVING having no groups; corrected: Group((1), P) forms one group keyed by the constant 1, and ?person is not a group key, so the §11.4 projection restriction applies"
+    - "Predicted q6 with HAVING(count(*) = 0) returns zero rows; observed one row with 0 on all five engines"
+    - "First described q2's result as everyone with at least one employer; restated as Bob only, 2 and 2"
+  bugs_found:
+    - "Oxigraph 0.5.11 and RDF4J 6.1.0 accept an aggregate inside a WHERE FILTER, which the SPARQL 1.1 grammar notes forbid, and return HTTP 200 with zero rows instead of a parse error; engine non-conformance, not resolved, recorded as an open gap"
+    - "q4 HAVING (?employers > 1): Fuseki 6.2.0, RDF4J 6.1.0 and QLever return Bob by resolving the SELECT alias, where the specification's alias-invisible, Sample-over-empty reading gives zero rows; engine extension, not resolved, recorded as an open gap"
+    - "q4: Tentris v1.4.0 rejects a query the specification allows, HTTP 400 'Non-aggregated variable ?employers is not part of the group key'; engine non-conformance, not resolved, recorded as an open gap"
+    - "QLever returns COUNT results, and stores the dataset's integers, as xsd:int rather than the xsd:integer the specification and file use; engine non-conformance, not resolved, recorded as an open gap"
+  completed:
+    - "Copied local-engine/agg-group-count/data.ttl verbatim to local-engine/agg-having/data.ttl; the dump on each of the five engines returned 18 triples matching the file (QLever stored the five integers as xsd:int)"
+    - "q1: predicted and observed 5 rows: Bob 2/2, Alice 1/1, Monica 1/1, Ben 0/1, James 0/1, xsd:integer"
+    - "q2 HAVING (count(?employer) > 1): predicted and observed one row, Bob 2/2, on all five engines"
+    - "q3 aggregate in a WHERE FILTER: observed and diagnosed the engines' 3-to-2 split"
+    - "q4 alias in HAVING: observed the three-way engine split and traced the specification's zero-row result by hand"
+    - "q5 HAVING (count(*) > 3) without GROUP BY: predicted and observed one row, 5, on all five engines"
+    - "q6 HAVING (count(*) = 0) over a non-matching predicate: observed one row, 0, on all five engines"
+    - "Answered the three-level sign-off: q2's and q6's observable results, q2's plan traced for Bob's two solutions through Aggregate, Filter and Extend, and the rationale for repeating the aggregate rather than reusing the alias"
+  not_completed:
+    - "A WHERE FILTER and a HAVING keeping different survivors on the same data was planned and not written"
+    - "COUNT(*) against COUNT(?employer) inside HAVING (for example = 0 matching Ben and James) was planned and not written"
+  open_questions: —
+  notes:
+    - "Primary engine: Oxigraph 0.5.11 (ghcr.io/oxigraph/oxigraph:0.5.11), served read-only from a named volume loaded once, with --explain run against a second volume loaded once; chosen by the plan agent's live lookup (maintained, free, prints a plan, not the Fuseki engine behind the open zero-match gap)"
+    - "Silent panel, adopted this session as a new CLAUDE.md rule: Tentris v1.4.0, Apache Jena Fuseki 6.2.0 (built from the official Maven kit), Eclipse RDF4J 6.1.0, QLever (digest dc93f8df); all agreed on q1, q2, corrected q5 and q6 except QLever's xsd:int datatypes; disagreed on q3 and q4"
+    - "Select agent offered: HAVING: Filtering Aggregated Groups (local-engine); ASK and CONSTRUCT: Query Forms Beyond SELECT (local-engine); Named Graphs and Quads: TriG and N-Quads (formats); BIND and VALUES: Introducing Bindings Inline (local-engine); Aggregates at Real Scale on a Remote Public Endpoint (remote-endpoint); chosen: the first"
+    - "data.ttl reused verbatim from local-engine/agg-group-count/"
+    - "Session started 2026-10-16 and finished 2026-10-17"

@@ -37,7 +37,9 @@ Concretely, this means:
   `<engine>` or "whichever engine this exercise picked," never a real
   product name.
 - Every exercise that needs a running engine (see "Target environments")
-  picks one **fresh, at session-planning time, by actually looking** — a
+  picks its engines — one primary plus a panel of others, see
+  "Cross-engine and cross-format comparison" — **fresh, at
+  session-planning time, by actually looking** — a
   live web search or fetch for what is currently mainstream, actively
   maintained, and freely available, never a name recalled from training
   data or carried over out of habit from the last exercise. "Mainstream
@@ -50,9 +52,10 @@ Concretely, this means:
   own notes file and `.history`/`.index` entries — the record of what was
   actually used lives with the session that used it, never in a rule file
   that would otherwise quietly become a fixed default by accident.
-- Comparing two engines deliberately is valuable material (see "Cross-engine
-  and cross-format comparison"), but that is a reason to use several over
-  time, not a reason to pick a favorite and stop looking.
+- Comparing engines deliberately is valuable material (see "Cross-engine
+  and cross-format comparison"), but that is a reason to use several — in
+  every exercise and over time — not a reason to pick a favorite, or a
+  favorite panel, and stop looking.
 - The same applies to RDF serialization and SPARQL result formats (see
   "Target environments" and "Scope") — no format is "the" format this repo
   uses; which one(s) a format exercise covers is a deliberate per-exercise
@@ -303,15 +306,26 @@ because the result looked plausible.
 
 ## Cross-engine and cross-format comparison
 
-Having tried more than one engine for `local-engine` exercises over time is
-a deliberate tool, not an accident of "whichever one came up first." The
-same query run against two different engines forces precision about what's
-genuinely guaranteed by the SPARQL standard versus what's one engine's own
-optimizer behavior, extension function, or default (result ordering when
-the query didn't ask for one is the classic trap). Don't manufacture this
-comparison artificially in a single sitting just to tick a box — it emerges
-naturally from "No hardcoded technology"'s look-it-up-fresh rule across
-several sessions; when it does happen, it's worth calling out explicitly.
+Running every `local-engine` query against several engines is a deliberate
+tool, not an accident of "whichever one came up first." The same query run
+against different engines forces precision about what's genuinely
+guaranteed by the SPARQL standard versus what's one engine's own optimizer
+behavior, extension function, or default (result ordering when the query
+didn't ask for one is the classic trap). So each `local-engine` exercise
+runs one primary engine plus a panel of others (the more the better for a
+clear picture, within what's practical to stand up), all chosen fresh per
+"No hardcoded technology" — never the same panel carried over by habit.
+Dialogue and chat output run against the primary engine as usual; every
+other engine in the panel runs each of the same queries silently, its
+results checked by Claude against the same hand-derived expectation and
+against the primary's, and kept out of chat to keep the dialogue lean. A
+panel engine is brought into the conversation only when something differs
+— an engine disagrees with the others, or any engine's behavior (accepting
+an illegal query, a wrong row, a dropped datatype) isn't spec-compliant —
+and then with its real output pasted verbatim, exactly like the primary's.
+The panel's makeup and its agree/disagree outcome per query are still
+recorded in the session's notes file and `.history/` `notes`, so silent
+agreement stays auditable later.
 
 A second, independent axis: `local-engine` versus `remote-endpoint` for a
 conceptually similar query. A small local container and a real public
@@ -333,7 +347,11 @@ an Unbound Variable (local-engine, `<engine>`)" and "Optional Pattern with
 an Unbound Variable (local-engine, `<other-engine>`)" — so the two sessions
 get distinct slugs and the comparison itself is recorded as a `related_to`
 link between them in `.index/` (see "Fast index"), not lost inside a single
-title.
+title. This applies to a session whose *primary* engine differs from an
+earlier session's on the same pattern; a silent panel's results stay part
+of the one session that ran them, recorded in its notes file and
+`.history/` entry, and never need a suffixed title or a `related_to` pair
+of their own.
 
 ## Cross-repo transfer
 
@@ -400,8 +418,9 @@ this repo's own sessions only (see "Fast index").
   (fork, `.skills/session-plan.md`) before the hands-on work. Checks the
   prerequisite chain against `.index/`/notes, splits cite-vs-derive, flags
   missing prerequisites, and — per "No hardcoded technology" — actually
-  looks up and proposes the concrete engine (for a `local-engine` exercise)
-  or format(s) (for a `formats` exercise) this topic needs, with a reason.
+  looks up and proposes the concrete primary engine and silent panel (for a
+  `local-engine` exercise) or format(s) (for a `formats` exercise) this
+  topic needs, with a reason.
 - I run the actual Socratic dialogue myself, in the main conversation, from
   its output. Plan agent never talks to you, never substitutes for Theory
   review.
@@ -930,7 +949,9 @@ decision.
   result matters to the dialogue (a parser's output, a query's bindings, a
   comparison's verdict), paste the real output verbatim into the chat
   message itself, alongside the exact command, rather than assuming you saw
-  it in the tool call.
+  it in the tool call. The one deliberate exception is a silent panel
+  engine's agreeing output (see "Cross-engine and cross-format
+  comparison"), which stays out of chat unless it differs.
 - File naming: Claude may rename exercise directories to minimize
   alphabetical clusters (shared prefix for related exercises) when a new
   exercise makes better grouping obvious.

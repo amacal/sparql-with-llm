@@ -1,0 +1,6 @@
+title: "HAVING: Filtering Aggregated Groups (local-engine)"
+kind: implementation
+status: demonstrated
+target: local-engine
+file: local-engine/agg-having/
+date: "2026-10-17"

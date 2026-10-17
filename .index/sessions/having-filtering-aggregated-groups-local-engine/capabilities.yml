@@ -1,0 +1,8 @@
+- "write-having-query"
+- "bracket-having-condition"
+- "choose-filter-or-having"
+- "predict-alias-visibility-in-having"
+- "apply-sample-rewrite"
+- "predict-having-over-implicit-group"
+- "read-oxigraph-explain-plan"
+- "run-silent-engine-panel"
