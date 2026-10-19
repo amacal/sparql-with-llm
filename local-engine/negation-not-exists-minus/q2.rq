@@ -1,0 +1,10 @@
+prefix rel: <http://example.com/relationship/>
+
+select ?person
+where
+{
+    ?person rel:name ?name .
+    filter not exists {
+        ?person rel:employeeOf ?employer .
+    }
+}

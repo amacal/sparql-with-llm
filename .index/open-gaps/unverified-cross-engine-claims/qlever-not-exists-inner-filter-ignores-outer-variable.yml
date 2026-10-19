@@ -1,0 +1,5 @@
+claim: "Per SPARQL 1.1 §18.6 substitute, a FILTER inside FILTER NOT EXISTS sees the outer solution's bound variables (spec §8.3.3); QLever instead evaluates such an inner FILTER as if the outer variable were unbound"
+status: "observed on QLever (adfreiburg/qlever:latest, digest dc93f8df) only, in one sitting: q7 returned 6 rows keeping Bob where Fuseki 6.2.0, Oxigraph 0.5.11, RDF4J 6.1.0, Tentris v1.4.0 and Virtuoso 7.2.17 returned the specification's 5; not yet checked against a newer QLever build"
+evidence:
+  - ".history/2026-10/2026-10-19-negation-filter-not-exists-versus-minus-local-engine.yml bugs_found"
+  - "local-engine/negation-not-exists-minus.md Engine panel outcomes"

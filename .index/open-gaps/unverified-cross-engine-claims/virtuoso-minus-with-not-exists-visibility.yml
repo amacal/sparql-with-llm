@@ -1,0 +1,5 @@
+claim: "Per SPARQL 1.1 §18.5 Minus, the right side of MINUS is evaluated independently, a right mapping with a disjoint domain removes nothing, and a left row whose variable is unbound is removed by any compatible right mapping sharing another variable; Virtuoso 7.2.17 instead appears to give MINUS NOT EXISTS-style visibility of outer variables, and in both MINUS and FILTER NOT EXISTS keeps rows whose outer variable is unbound (a SQL NULL comparison is a suggested, unverified cause)"
+status: "observed on Virtuoso 7.2.17 only, in one sitting, against Fuseki 6.2.0, Oxigraph 0.5.11, RDF4J 6.1.0, QLever and Tentris v1.4.0, which all followed the specification: q4 0 rows instead of 6, q6 5 rows instead of 6 (Bob removed), q8 and q9 5 rows instead of 4 (Alice kept); cause not investigated"
+evidence:
+  - ".history/2026-10/2026-10-19-negation-filter-not-exists-versus-minus-local-engine.yml bugs_found"
+  - "local-engine/negation-not-exists-minus.md Engine panel outcomes"

@@ -1,0 +1,62 @@
+date: "2026-10-19"
+title: "Negation: FILTER NOT EXISTS Versus MINUS (local-engine)"
+session:
+  file: local-engine/negation-not-exists-minus/
+  status: completed
+  attempted:
+    - "Hand-write nine queries over a reused people dataset comparing OPTIONAL + FILTER(!bound), FILTER NOT EXISTS and MINUS on the shared-variable case and on the specification's documented differences (no shared variables, inner FILTER, an outer variable left unbound by OPTIONAL), predicting each result by hand and checking it on a primary engine plus a silent five-engine panel"
+  explored:
+    - "Recap of Diff's for-all definition from §18.5, fetched live and quoted verbatim, worked through on single-mapping pairs"
+    - "§8.1.1, §8.2, §8.3.3, and the §18.5 Minus and §18.6 substitute / Evaluation of Exists definitions, fetched live from the raw W3C page and quoted verbatim"
+    - "Jena qparse --print=op algebra for q2, q3, q6 and q7 (filter(notexists ...) versus minus)"
+    - "Whether the right side of MINUS needs to repeat the left side's pattern, derived from the Minus definition"
+    - "A variable-free right side under MINUS and NOT EXISTS, reasoned through verbally without a query"
+    - "Whether a FILTER over a variable that can never be bound in its scope should be a parse error: definitely-bound versus possibly-bound rules, against q1's !bound use"
+    - "Table of the four MINUS / NOT EXISTS pairs and the rule for when the two agree"
+  tried:
+    - "Chose rel:worksAt as the negated predicate first; switched to rel:employeeOf, which has a blank-node value and a two-value subject"
+    - "q1 written with the FILTER before the triple pattern and OPTIONAL in the group"
+    - "q3 first written with ?person rel:name ?name repeated inside the MINUS; edited to keep only ?person rel:employeeOf ?employer and rerun"
+    - "q4 right side written as ?p1 rel:employeeOf ?employer, sharing no variable with the left side"
+    - "q6 and q7 used a string comparison FILTER(?name = \"Bob\") as the inner FILTER"
+    - "q8 first written with rel:employeeOf in the inner pattern, run, then edited to rel:worksAt and rerun"
+  corrections:
+    - "Described Diff as returning non-compatible, non-intersecting solutions; corrected: mappings sharing no variable are compatible, and Diff keeps left mappings that have no compatible right mapping with expr true"
+    - "Described Diff as returning compatible merged mappings; corrected: Diff outputs unmerged left mappings only"
+    - "Concluded a left mapping is kept in Diff with expr = true and a compatible right mapping; corrected to removed, since neither escape route applies"
+    - "Called {?x -> :a} and {?x -> :b} compatible while noting the values disagree; corrected to not compatible"
+    - "Explained the NOT EXISTS version of q4 using compatibility and disjointness; corrected to substitute leaving the inner pattern unchanged when no variable is shared"
+    - "Predicted q6 would either be rejected or evaluate the inner FILTER as an error; corrected that the query is legal SPARQL, then predicted the right side is empty and 6 rows return"
+    - "Traced Alice in the first q8 as NOT EXISTS false; corrected: the substituted pattern has no match, so NOT EXISTS is true and Alice is kept"
+    - "Predicted Bob returns two rows in the rel:worksAt q8; corrected to zero, since both substituted triples exist"
+    - "Described q9's Alice as removed because disjointness accepts the pair; restated: the domains share ?person, so they are not disjoint, and the mappings are compatible"
+    - "Described MINUS's disjoint test as about common terms and only about the empty mapping; corrected to common variables, covering any right mapping that shares no variable"
+  bugs_found:
+    - "Virtuoso 7.2.17 returned 0 rows for q4 (MINUS with no shared variables), where the specification removes nothing (6 rows); engine non-conformance, not resolved, recorded as an open gap"
+    - "Virtuoso 7.2.17 removed Bob in q6, letting the MINUS right side's FILTER see the outer ?name (5 rows instead of 6); engine non-conformance, not resolved, recorded as an open gap"
+    - "Virtuoso 7.2.17 kept Alice in q8 and q9 (5 rows instead of 4), not letting her unbound ?employer match freely; engine non-conformance, not resolved, recorded as an open gap"
+    - "QLever kept Bob in q7 (6 rows instead of 5): the inner FILTER inside NOT EXISTS did not see the substituted outer ?name; engine non-conformance, not resolved, recorded as an open gap"
+  completed:
+    - "Reused local-engine/agg-having/data.ttl with one added triple, cmp:ID5 rel:name \"ID5\"; the Fuseki dump returned 19 triples matching the file"
+    - "q1 OPTIONAL + FILTER(!bound): predicted and observed Alice, James, cmp:ID5 on all six engines"
+    - "q2 FILTER NOT EXISTS: predicted and observed the same 3 rows on all six engines"
+    - "q3 MINUS, before and after removing the repeated pattern: predicted and observed the same 3 rows on all six engines"
+    - "q4 MINUS with no shared variable: predicted and observed 6 rows on Fuseki, Oxigraph, RDF4J, QLever and Tentris"
+    - "q5 FILTER NOT EXISTS with no shared variable: predicted and observed 0 rows on all six engines"
+    - "q6 MINUS with an inner FILTER on the outer ?name: observed 6 rows on five engines, matching the corrected prediction"
+    - "q7 FILTER NOT EXISTS with the same inner FILTER: predicted and observed 5 rows without Bob on five engines"
+    - "q8 with rel:employeeOf inside: predicted and observed Alice, James, cmp:ID5 with ?employer unbound on all six engines"
+    - "q8 with rel:worksAt inside: observed Ben/cmp:Microsoft, Monica/blank node, James and cmp:ID5 unbound on five engines, matching the corrected prediction"
+    - "q9 MINUS version of q8: predicted and observed the same 4 rows on five engines"
+    - "Answered all three depth-check levels: observable behavior and internal mechanism, then design rationale (NOT EXISTS expresses conditions on outer values, MINUS is simpler to reason about), with the q7 example tying the rationale to a concrete query supplied by Claude after the user's attempt"
+  not_completed:
+    - "Probes of errata-query-8 and errata-query-10 (VALUES, BIND or a nested SELECT inside EXISTS) were planned and not run"
+    - "The variable-free right side case was reasoned through verbally and not written as a query"
+  open_questions:
+    - "Why Virtuoso 7.2.17 keeps rows whose outer variable is unbound in q8 and q9; a SQL NULL comparison inside a correlated subquery was suggested and not verified"
+  notes:
+    - "Primary engine: Apache Jena Fuseki 6.2.0, built from the official jena-fuseki-docker-6.2.0 kit and loaded in memory with --file; algebra printed with arq.qparse --print=op from the apache-jena-6.2.0 lib directory copied into the Fuseki container and run with its JRE at /opt/java-minimal/bin/java; chosen by the plan agent's live lookup because it prints the algebra (minus versus filter(notexists))"
+    - "Silent panel: Oxigraph 0.5.11, Eclipse RDF4J 6.1.0, QLever (digest dc93f8df, integers stored as xsd:int), Tentris v1.4.0 (passed a MINUS/EXISTS smoke test at spin-up), Virtuoso Open Source 7.2.17 (loaded into named graph urn:negation:ds, queried with default-graph-uri); Blazegraph excluded as unmaintained"
+    - "Panel outcome: all six agreed on q1, q2, q3, q5 and the first q8; Virtuoso differed on q4, q6, q8 (rel:worksAt) and q9; QLever differed on q7"
+    - "Select agent offered: Negation: FILTER NOT EXISTS Versus MINUS (local-engine); Named Graphs and Quads: TriG and N-Quads (formats); ASK and CONSTRUCT: Query Forms Beyond SELECT (local-engine); Subqueries: Counting Two Multi-Valued Properties Without Join Inflation (local-engine); Aggregates at Real Scale on a Remote Public Endpoint (remote-endpoint); chosen: the first"
+    - "Session started 2026-10-17 and finished 2026-10-19"

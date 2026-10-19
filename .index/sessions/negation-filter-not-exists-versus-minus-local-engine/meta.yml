@@ -1,0 +1,6 @@
+title: "Negation: FILTER NOT EXISTS Versus MINUS (local-engine)"
+kind: implementation
+status: demonstrated
+target: local-engine
+file: local-engine/negation-not-exists-minus/
+date: "2026-10-19"

@@ -1,0 +1,8 @@
+- "write-filter-not-exists"
+- "write-minus"
+- "trace-substitute-per-solution"
+- "trace-minus-compatibility-and-disjointness"
+- "predict-not-exists-versus-minus-divergence"
+- "write-optional-not-bound-negation"
+- "print-query-algebra-with-qparse"
+- "run-silent-engine-panel"
