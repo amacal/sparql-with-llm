@@ -158,7 +158,13 @@ it rather than taking an empty file as the engine's answer. And when the
 CLI itself seems to be missing, look inside the image before concluding
 so: a minimal image built from an engine's own kit may ship its runtime
 (and with it the CLI's launcher) outside `PATH`, reachable only by its
-full path.
+full path. A server-only image can also lack the plan/algebra CLI
+entirely even though the engine's full distribution ships it; then fetch
+that official distribution under `.tmp/`, `docker cp` its libraries into
+the running container, and invoke the CLI with the image's own runtime
+(by its full path) against the query file copied in alongside — the same
+engine version as the server, so the printed algebra is the one the
+server actually uses.
 
 Some engines only load into a named graph, and what such an engine treats
 as the default graph when a query names none (empty, or the union of every
