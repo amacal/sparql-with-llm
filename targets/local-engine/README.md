@@ -196,12 +196,26 @@ Once they're all up, write one small helper under `.tmp/panel/` — never a
 tracked path — that takes a query file and, for each engine number given
 (all of them by default), sends it over the SPARQL 1.1 Protocol to that
 engine's own endpoint and prints the HTTP status followed by either the
-error body or a normalized result: the variable list, then one line per
-solution with every term's type and datatype or language tag shown and an
-unbound variable marked explicitly, the lines sorted so that an engine's
-own result order (unspecified without `ORDER BY`) never reads as a
-disagreement. Engine IPs and endpoint paths go in a separate file the
-helper reads, refreshed whenever a container is recreated:
+error body or a normalized result, shaped by the query form. For `SELECT`:
+the variable list, then one line per solution with every term's type and
+datatype or language tag shown and an unbound variable marked explicitly,
+the lines sorted so that an engine's own result order (unspecified without
+`ORDER BY`) never reads as a disagreement. For `ASK`: the boolean. For
+`CONSTRUCT`/`DESCRIBE` (requested as a line-based RDF serialization every
+engine in the panel accepts): the raw line count and the distinct-triple
+count kept apart — an engine that streams instantiated triples without
+building the set writes repeated lines for the same graph, which is a
+serialization difference, not a different graph — then the triples with
+blank-node labels renamed canonically (by order of first appearance after
+sorting), never all masked to one placeholder, since a single placeholder
+erases exactly the node sharing that graph isomorphism depends on; when
+counts agree but the renamed lines differ, compare those triples by hand
+before calling it a disagreement. The status printed is always that of
+the request in the format actually being compared — never silently retry
+an error response in another format, which would make an engine's
+rejection of the query read as a content-negotiation choice. Engine IPs
+and endpoint paths go in a separate file the helper reads, refreshed
+whenever a container is recreated:
 
 ```bash
 .tmp/panel/run.sh local-engine/<dir>/<query-file>.rq          # every engine
