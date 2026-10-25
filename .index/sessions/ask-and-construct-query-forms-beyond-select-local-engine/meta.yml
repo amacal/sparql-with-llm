@@ -1,0 +1,6 @@
+title: "ASK and CONSTRUCT: Query Forms Beyond SELECT (local-engine)"
+kind: implementation
+status: demonstrated
+target: local-engine
+file: local-engine/form-ask-construct/
+date: "2026-10-25"

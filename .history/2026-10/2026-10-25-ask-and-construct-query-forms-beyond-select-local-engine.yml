@@ -1,0 +1,61 @@
+date: "2026-10-25"
+title: "ASK and CONSTRUCT: Query Forms Beyond SELECT (local-engine)"
+session:
+  file: local-engine/form-ask-construct/
+  status: completed
+  attempted:
+    - "Hand-write an 18-triple people dataset and seven queries covering CONSTRUCT set-union collapse, template blank nodes, dropped template triples (unbound variable, literal subject), the CONSTRUCT WHERE short-form restriction, ASK on a matching and a non-matching variable-free pattern, and SELECT * over a variable-free pattern, predicting each result by hand and checking it on a primary engine plus a silent five-engine panel"
+  explored:
+    - "Recap checks: an RDF graph as a set, fresh blank nodes from [ ], an unbound variable as an absent mapping pair"
+    - "RDF 1.1 Concepts §3 and §3.1, Turtle §2.6 and §2.7, SPARQL 1.1 Query §16, §16.2, §16.2.1, §16.2.4, §16.3 and §18.1.10, Results-JSON §4, Protocol §2.1.5 and §2.1.6, and N-Triples §1 and §4, fetched live and quoted verbatim"
+    - "The spec's §16.2 and §16.2.1 examples traced by hand in two steps: solutions first, then template instantiation"
+    - "Generic made-up examples for an unbound OPTIONAL variable in a template and a literal-bound variable in subject position"
+    - "HTTP content negotiation with the Accept header for a graph-valued result"
+    - "Whether a response with repeated N-Triples lines violates §16.2, judged against Protocol §2.1.6 and N-Triples §1"
+    - "QLever's construct-deduplication runtime parameter, read from its source file RuntimeParameters.h on GitHub master"
+    - "Fuseki's q3 response body loaded into a throwaway Oxigraph container as a strict N-Triples parse check"
+    - "Oxigraph query --explain plan for q3, checked for where the template appears"
+    - "Why the spec drops illegal template triples silently rather than failing the query"
+  tried:
+    - "First dataset version had Monica's employer as a blank node with one property; edited to add rel:parent [] and reloaded into a fresh container"
+    - "q1 built the identical-triple case from a UNION of Bob's rel:worksAt and rel:employeeOf; the file was briefly edited to a Monica branch while the panel ran, then restored"
+    - "q2 first had no template blank node, then _:random in one template triple, then _:random in two template triples"
+    - "q3 went through several versions: OPTIONAL template triple without a literal subject; literal subject with the surviving triple removed; all people matched; final version with ?person rel:name ?name and ?name rel:at ?employer"
+    - "q4 written as an illegal CONSTRUCT WHERE containing OPTIONAL"
+  corrections:
+    - "Described an RDF graph as a multiset while stating only one copy of a repeated triple is stored; corrected to a set, per RDF 1.1 Concepts §3"
+    - "Described duplicate removal as something an engine or parser does; corrected: a set cannot contain a second copy"
+    - "Counted the two _:a labels in one Turtle file as two blank nodes; corrected to one node, per Turtle §2.6, unlike two [ ] which allocate two"
+    - "Wrote an output triple, (Alice, FN, Alice), as the solution of the spec's §16.2 example; corrected: the solution is the mapping {?x -> _:a, ?name -> \"Alice\"}, and the template turns it into the triple"
+    - "Said duplicates collapse when imported, and later that the solutions are converted into a set; corrected: the solutions stay two, and the instantiated triples are what set union combines"
+    - "Judged RDF4J's and QLever's four-line q1 body a violation of §16.2; after parsing it as two triples, concluded it is the same graph serialized with repeated lines, which conforms"
+    - "Predicted all engines would reject q4; observed Virtuoso 7.2.17 accepting it with HTTP 200"
+    - "Listed only James, then James and the blank node, as missing from Virtuoso's q4 output; corrected to James, Ben and the Oracle blank node, all lacking rel:worksAt"
+    - "Described q2's free engine choice as carrying the data blank node over or creating a new one; corrected: the node must come through and keep one label within the response; only the label text is free"
+    - "Described template instantiation as concatenation without deduplication; restated as set union of the graph, with repeated lines possible only in the serialization"
+  bugs_found:
+    - "Fuseki 6.2.0 and QLever emitted q3 template triples with a literal in subject position (10 distinct triples instead of 6), where §16.2 requires them to be dropped; Fuseki's body fails a strict N-Triples parse at line 1; engine non-conformance, not resolved, recorded as an open gap"
+    - "Virtuoso 7.2.17 failed q3 with HTTP 500 (RDF01 Error Bad variable value in CONSTRUCT) instead of dropping the illegal triples; engine non-conformance, not resolved, recorded as an open gap"
+    - "Virtuoso 7.2.17 accepted q4, a CONSTRUCT WHERE containing OPTIONAL, and returned 7 triples omitting Ben, James and the Oracle blank node, treating the OPTIONAL as required; engine non-conformance, not resolved, recorded as an open gap"
+    - "Tentris v1.4.0 answered q7 (SELECT * over a matching variable-free pattern) with HTTP 500 Internal Server Error, while answering the same pattern as ASK (q5) correctly; engine defect, not resolved, recorded in the select-star open gap"
+    - "Virtuoso 7.2.17 answered q7 with vars [\"_star_fake\"] bound to \"1\"^^xsd:integer instead of vars [] and one empty binding; engine non-conformance, not resolved, recorded in the select-star open gap"
+  completed:
+    - "Wrote local-engine/form-ask-construct/data.ttl; the Oxigraph dump returned 18 triples after the final edit, and all five panel engines stored 18 triples"
+    - "q1: predicted and observed 2 triples (ppl:Bob rel:at cmp:ID5 and cmp:Tentris) from 4 solutions on Oxigraph; all six engines returned the same 2-triple graph"
+    - "q2: predicted and observed 9 triples with 4 distinct blank nodes (3 minted by the template, 1 carried over from the data through ?name) on all six engines"
+    - "q3: predicted and observed the 6 rel:name triples, with every ?name rel:at ?employer triple dropped, on Oxigraph, RDF4J and Tentris"
+    - "q4: observed HTTP 400 parse errors at the optional token on Oxigraph, Fuseki, RDF4J, QLever and Tentris"
+    - "q5 and q6: predicted and observed true and false on all six engines"
+    - "q7: predicted and observed vars [] with bindings [{}] on Oxigraph, Fuseki, RDF4J and QLever"
+    - "Answered all three depth-check levels: observable results per query with the panel counts table supplied, the E-then-QF mechanism with set union and per-triple drops, and the CONSTRUCT-versus-SELECT and silent-drop trade-off rationale"
+  not_completed:
+    - "RDF4J's own source was not checked for why it writes repeated CONSTRUCT lines"
+  open_questions: —
+  notes:
+    - "Primary engine: Oxigraph 0.5.12 (ghcr.io/oxigraph/oxigraph:0.5.12), in memory, loaded with a POST to /store?default and dump-checked with GET /store?default; plan printed with the oxigraph query --explain CLI against an on-disk copy in a named volume; chosen by the plan agent's live lookup as a newly released version not yet used here"
+    - "Silent panel: Apache Jena Fuseki 6.2.0 (built from the jena-fuseki-docker-6.2.0 kit, loaded with --file), Eclipse RDF4J 6.1.0 (in-memory repository loaded via REST), QLever (digest sha256:1ef17d173ee0..., ages stored as xsd:int), Tentris v1.4.0, Virtuoso Open Source 7.2.17 (named graph urn:form-ask-construct:ds, queried with default-graph-uri); GraphDB excluded because it needs a registered license file; Blazegraph and Corese excluded as archived"
+    - "Panel outcome: all six agreed on q2, q5 and q6; q1 RDF4J and QLever wrote 4 lines for the same 2 triples; q3 Tentris 7 lines for 6 triples, Fuseki 10 triples, QLever 11 lines for 10 triples, Virtuoso HTTP 500; q4 Virtuoso HTTP 200, the rest HTTP 400; q7 Tentris HTTP 500, Virtuoso _star_fake"
+    - "All CONSTRUCT comparisons requested application/n-triples, and all ASK and SELECT comparisons requested application/sparql-results+json"
+    - "Select agent offered: ASK and CONSTRUCT: Query Forms Beyond SELECT (local-engine); BIND and VALUES: Introducing Bindings Inline (local-engine); Subqueries: Counting Two Multi-Valued Properties Without Join Inflation (local-engine); Named Graphs and Quads: TriG and N-Quads (formats); Aggregates at Real Scale on a Remote Public Endpoint (remote-endpoint); chosen: the first"
+    - "Tentris minimal reproduction: SELECT * {} and SELECT * WHERE { } return HTTP 500 on a fresh Tentris container with an empty store, in SPARQL JSON, XML, CSV and TSV alike, while ASK {} returns true and SELECT ?x {} returns [{}]; the debug log shows only response failed 500; reproduced on every 1.x release tag (v1.0.0, v1.1.0, v1.2.0, v1.3.0, v1.4.0); 0.x tags (v0.22.7) refuse to start without a license file at /config/tentris-license.toml and were not tested"
+    - "Session started 2026-10-19 and finished 2026-10-25; the retention checks due 2026-10-22 and 2026-10-24 fell due during the session and were not taken in it"

@@ -1,0 +1,5 @@
+claim: "SPARQL 1.1 §16.2.4 restricts CONSTRUCT WHERE to a basic graph pattern, so a short form containing OPTIONAL is a syntax error; Virtuoso 7.2.17 accepts it and evaluates the OPTIONAL as a required pattern"
+status: "observed on Virtuoso 7.2.17 only, in one sitting (2026-10-25, q4): HTTP 200 with 7 triples omitting every subject without rel:worksAt, where Oxigraph 0.5.12, Fuseki 6.2.0, RDF4J 6.1.0, QLever and Tentris v1.4.0 returned HTTP 400; cause not investigated"
+evidence:
+  - ".history/2026-10/2026-10-25-ask-and-construct-query-forms-beyond-select-local-engine.yml bugs_found and corrections"
+  - "local-engine/form-ask-construct.md Engine panel outcomes"

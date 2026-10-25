@@ -1,5 +1,7 @@
 claim: "A standards-conforming engine answers SELECT * over a matching variable-free pattern with \"vars\": [] and \"bindings\": [ {} ] (one empty solution), per SPARQL 1.1 Query §16.1.1 and §5.2.1"
-status: "derived from the spec only; the one engine observed (DBpedia, Virtuoso 08.03) instead returned \"vars\": [\"_star_fake\"] with _star_fake bound to \"1\"^^xsd:integer; not yet checked on a second engine"
+status: "spec reading confirmed on 2026-10-25 by Oxigraph 0.5.12, Fuseki 6.2.0, RDF4J 6.1.0 and QLever (digest 1ef17d17); Virtuoso 7.2.17 locally reproduces the remote DBpedia behaviour (\"vars\": [\"_star_fake\"] bound to \"1\"^^xsd:integer), and Tentris v1.4.0 answers HTTP 500 while answering the same pattern as ASK correctly; both deviations remain unexplained; the Tentris case reduces to a data-independent minimal reproduction, SELECT * {} on an empty store, failing on every 1.x release (v1.0.0 to v1.4.0)"
 evidence:
   - ".history/2026-10/2026-10-14-first-query-against-a-remote-public-sparql-endpoint-remote-endpoint.yml open_questions and bugs_found"
   - "remote-endpoint/remote-first-query.md Internal mechanism and Worked example"
+  - ".history/2026-10/2026-10-25-ask-and-construct-query-forms-beyond-select-local-engine.yml bugs_found and completed (q7)"
+  - "local-engine/form-ask-construct.md Engine panel outcomes and Edge cases"

@@ -9,8 +9,10 @@ sessions:
   - "UNION: Alternative Patterns and Variables Bound in Only One Branch (local-engine)"
   - "Property Paths: Transitive Traversal with + and * (local-engine)"
   - "Negation: FILTER NOT EXISTS Versus MINUS (local-engine)"
+  - "ASK and CONSTRUCT: Query Forms Beyond SELECT (local-engine)"
 frontier:
   - "ORDER BY with LIMIT and OFFSET: Ordered Slices of a Solution Sequence (local-engine)"
   - "Property Paths: Transitive Traversal with + and * (local-engine)"
   - "Negation: FILTER NOT EXISTS Versus MINUS (local-engine)"
+  - "ASK and CONSTRUCT: Query Forms Beyond SELECT (local-engine)"
 explicit_future_targets: —

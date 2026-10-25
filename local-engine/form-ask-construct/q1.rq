@@ -1,0 +1,12 @@
+prefix ppl: <http://example.com/people/>
+prefix rel: <http://example.com/relationship/>
+
+construct {
+    ppl:Bob rel:at ?name .
+}
+
+where {
+    { ppl:Bob rel:worksAt ?name . }
+    union
+    { ppl:Bob rel:employeeOf ?name . }
+}

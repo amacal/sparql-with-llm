@@ -1,7 +1,8 @@
 claim: "QLever stores xsd:integer literals from a loaded dataset as xsd:int and returns COUNT results as xsd:int, where SPARQL 1.1 gives COUNT the datatype xsd:integer"
-status: "observed on QLever in two sessions (2026-10-14 and 2026-10-17, images not pinned to the same digest); Oxigraph 0.5.11, Tentris v1.4.0, Fuseki 6.2.0 and RDF4J 6.1.0 returned xsd:integer for the same COUNT queries"
+status: "observed on QLever in three sessions (2026-10-14, 2026-10-17, and 2026-10-25 with digest 1ef17d17 storing loaded ages as xsd:int), images not pinned to the same digest; Oxigraph 0.5.11, Tentris v1.4.0, Fuseki 6.2.0 and RDF4J 6.1.0 returned xsd:integer for the same COUNT queries"
 evidence:
   - ".history/2026-10/2026-10-14-distinct-and-duplicate-solutions-after-projection-local-engine.yml notes"
   - ".history/2026-10/2026-10-17-having-filtering-aggregated-groups-local-engine.yml notes"
   - "local-engine/modifier-distinct.md Edge cases"
   - "local-engine/agg-having.md Engine panel outcomes"
+  - ".history/2026-10/2026-10-25-ask-and-construct-query-forms-beyond-select-local-engine.yml notes"

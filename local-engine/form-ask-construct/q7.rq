@@ -1,0 +1,8 @@
+prefix cmp: <http://example.com/company/>
+prefix ppl: <http://example.com/people/>
+prefix rel: <http://example.com/relationship/>
+
+select *
+where {
+    ppl:Bob rel:worksAt cmp:Tentris .
+}

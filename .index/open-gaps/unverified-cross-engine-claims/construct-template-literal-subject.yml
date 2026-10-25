@@ -1,0 +1,5 @@
+claim: "Per SPARQL 1.1 §16.2, a CONSTRUCT template instantiation that puts a literal in subject position is not included in the output graph and the rest of the graph is still returned; engines diverge from this"
+status: "observed in one sitting (2026-10-25, q3): Oxigraph 0.5.12, RDF4J 6.1.0 and Tentris v1.4.0 drop the triples as specified; Fuseki 6.2.0 and QLever emit them as N-Triples lines with a literal subject (a body a strict parser rejects at line 1); Virtuoso 7.2.17 fails the whole query with HTTP 500 RDF01; not yet checked for a literal in predicate position"
+evidence:
+  - ".history/2026-10/2026-10-25-ask-and-construct-query-forms-beyond-select-local-engine.yml bugs_found"
+  - "local-engine/form-ask-construct.md Engine panel outcomes and Design rationale"

@@ -1,0 +1,7 @@
+prefix ppl: <http://example.com/people/>
+prefix rel: <http://example.com/relationship/>
+
+construct where {
+    ?person rel:name ?name .
+    optional { ?person rel:worksAt ?employer . } .
+}

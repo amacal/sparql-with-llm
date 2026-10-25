@@ -1,0 +1,14 @@
+prefix ppl: <http://example.com/people/>
+prefix rel: <http://example.com/relationship/>
+
+construct {
+    ?person rel:at ?name .
+    ?person rel:id _:random .
+    _:random rel:belongsTo ?person .
+}
+
+where {
+    { ?person rel:worksAt ?name . ?person rel:name "Bob" . }
+    union
+    { ?person rel:employeeOf ?name . ?person rel:name "Monica" . }
+}
