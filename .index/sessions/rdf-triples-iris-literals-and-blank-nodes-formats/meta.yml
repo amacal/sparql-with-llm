@@ -1,6 +1,6 @@
 title: "RDF Triples: IRIs, Literals, and Blank Nodes (formats)"
 kind: implementation
-status: demonstrated
+status: retained
 target: formats
 file: formats/rdf-triples-basics/
 date: "2026-10-10"

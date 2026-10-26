@@ -1,0 +1,6 @@
+_:Bob <http://example.com/relationship/learns> <http://example.com/tech/SparQL> .
+_:Bob <http://example.com/relationship/knows> <http://example.com/tech/Packer> .
+<http://example.com/people/Alice> <http://example.com/relationship/knows> <http://example.com/tech/Terraform> .
+<http://example.com/people/James> <http://example.com/relationship/likes> "Rust" .
+<http://example.com/people/James> <http://example.com/relationship/age> "26"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://example.com/people/James> <http://example.com/relationship/likes> "Rust"@en .

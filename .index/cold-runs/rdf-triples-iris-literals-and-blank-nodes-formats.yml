@@ -1,5 +1,7 @@
 concept: "RDF Triples: IRIs, Literals, and Blank Nodes (formats)"
 due_date: "2026-10-22"
-status: pending
-task: —
-result: —
+status: passed
+resolution: dedicated_check
+planned_minutes: 5
+task: "Two user-written N-Triples files sharing the blank node label _:Bob, an identical IRI-only line, identical blank-node lines, and case-differing IRIs; predicted per-file counts, the spec-conformant merge (rename_blank_nodes=True in pyoxigraph 0.5.13) and the N-Triples round trip, then verified against pyoxigraph output and an RDFC-1.0 isomorphism check."
+result: "Passed: per-file counts (6/7 triples, 1 blank node each), merged blank nodes (2) and the four _:Bob lines staying four triples, set-collapse of the identical IRI-only line, and isomorphism as the round-trip criterion all predicted unaided; why a serializer must give the two merged blank nodes distinct labels was reached only after the setup was restated and the final step supplied."

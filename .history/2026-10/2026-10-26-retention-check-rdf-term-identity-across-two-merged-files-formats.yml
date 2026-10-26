@@ -1,0 +1,35 @@
+date: "2026-10-26"
+title: "Retention Check: RDF Term Identity Across Two Merged Files (formats)"
+session:
+  file: —
+  status: completed
+  attempted:
+    - "Dedicated retention check, one sitting, for two concepts due 2026-10-22: \"RDF Triples: IRIs, Literals, and Blank Nodes (formats)\" and \"Literal Datatypes and Language Tags (formats)\"."
+  explored:
+    - "What decides term identity for IRIs, literals and blank nodes across two independently written files."
+    - "Term equality versus value equality for three cross-file literal pairs, including the spec's MAY-lowercase rule for language tags."
+    - "Why a single serialized file must give two distinct blank nodes two distinct labels."
+    - "Contrast merge with pyoxigraph's default rename_blank_nodes=False (not scored)."
+  tried:
+    - "User wrote a.nt and b.nt; four revisions were needed before the literal-pair constraints were met (pairs split across files, a numeric spelling pair, a tag-case-only pair)."
+  corrections:
+    - "Gave xsd:string as the datatype of a language-tagged literal; the spec states rdf:langString (RDF 1.1 Concepts section 3.3 excerpt shown)."
+    - "Stated that \"Rust\"@en and \"Rust\"@EN have unequal values; the spec's value is the pair (lexical form, tag) with tags in lowercase value space, so the values are equal."
+    - "Justified collapsing \"Rust\"@en/\"Rust\"@EN by value equality; corrected to term identity after comparing with \"26\"/\"026\" (equal value, distinct terms)."
+    - "Totalled the merge as 9/10 triples; the line-by-line verdicts give 11 (tag kept) or 10 (tag lowercased); observed 10."
+    - "Predicted the serializer would write the plain literal with an explicit ^^xsd:string; observed the explicit \"Rust\"^^xsd:string written as plain \"Rust\"."
+    - "Predicted a single file labelling two blank nodes both _:Bob would reparse to 2 blank nodes and 4 triples; after the setup was restated, corrected to 1 blank node and 2 triples (not isomorphic)."
+  bugs_found: —
+  completed:
+    - "Verified per-file counts by hand and against pyoxigraph: a.nt 6 triples/1 blank node, b.nt 7 triples/1 blank node."
+    - "Verified the spec-conformant merge (rename_blank_nodes=True): 10 triples, 2 blank nodes; pyoxigraph lowercased @EN to @en at parse time, collapsing pair (c)."
+    - "Round-tripped the merged graph through N-Triples: 10 triples reparsed, RDFC-1.0 canonical forms equal, byte-level differences were line order, fresh blank node labels, plain form for xsd:string, and lowercase tag."
+    - "Predicted and verified the default rename_blank_nodes=False merge: 8 triples, 1 blank node."
+    - "Judged \"RDF Triples: IRIs, Literals, and Blank Nodes (formats)\" passed and \"Literal Datatypes and Language Tags (formats)\" failed."
+  not_completed:
+    - "\"Literal Datatypes and Language Tags (formats)\" needs real reinforcement as a priority candidate after the failed check."
+  open_questions: —
+  notes:
+    - "Retention check (kind: retention-check); outcomes: RDF Triples concept passed (meta.yml promoted to retained), Literal Datatypes concept failed."
+    - "Tool: pyoxigraph 0.5.13 in a .tmp venv, chosen by live lookup as mainstream, maintained, and different from rdflib used in all earlier formats sessions."
+    - "Run before CLAUDE.md's retention-check rules were revised mid-sitting; it ran far past the 5-minute budget and created an exercise directory, formats/rdf-merge-term-identity/, which the revised rules no longer use for retention checks. planned_minutes was recorded at resolution because the field did not exist when the checks were scheduled."
