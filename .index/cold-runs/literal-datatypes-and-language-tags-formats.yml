@@ -1,7 +1,4 @@
 concept: "Literal Datatypes and Language Tags (formats)"
 due_date: "2026-10-22"
 status: failed
-resolution: dedicated_check
-planned_minutes: 5
-task: "Three cross-file literal pairs on one subject/predicate (plain vs explicit xsd:string, \"26\" vs \"026\" as xsd:integer, \"Rust\"@en vs \"Rust\"@EN); gave each literal's lexical form/datatype IRI/tag and term- and value-equality per pair, then verified against the pyoxigraph 0.5.13 merge and round trip."
-result: "Failed: the datatype of a language-tagged literal (rdf:langString) was not recalled and was supplied from RDF 1.1 Concepts section 3.3; the value of a language-tagged literal needed the same excerpt; merging pair (c) was first justified by value equality and the term-identity rule was stated by Claude before recovery. Plain literal = xsd:string and \"26\"/\"026\" as distinct terms with equal value were correct unaided."
+result: "Resolved 2026-10-26 by a dedicated check (session \"Retention Check: RDF Term Identity Across Two Merged Files (formats)\", run under the earlier rule). Failed: the datatype of a language-tagged literal (rdf:langString) was not recalled and was supplied from RDF 1.1 Concepts section 3.3; the value of a language-tagged literal needed the same excerpt; merging pair (c) was first justified by value equality and the term-identity rule was stated by Claude before recovery. Plain literal = xsd:string and \"26\"/\"026\" as distinct terms with equal value were correct unaided."

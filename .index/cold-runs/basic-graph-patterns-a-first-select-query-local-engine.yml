@@ -1,7 +1,4 @@
 concept: "Basic Graph Patterns: A First SELECT Query (local-engine)"
 due_date: "2026-10-24"
 status: passed
-resolution: dedicated_check
-planned_minutes: 2
-task: "Spoken only: predicted the solutions of { ?p rel:aged ?a . ?p rel:experienced ?y } against local-engine/filter-unbound/data.ttl."
-result: "Passed: predicted exactly Bob (46, 10) and Ben (21, \"2 years\") unaided, with Alice and James excluded for lacking a rel:experienced triple; matches the spec and the recorded filter-unbound data."
+result: "Resolved 2026-10-26 by a dedicated check (session \"Retention Check: Required Join, OPTIONAL, and FILTER Errors over Unbound Variables (local-engine)\", run under the earlier rule). Passed: predicted exactly Bob (46, 10) and Ben (21, \"2 years\") unaided, with Alice and James excluded for lacking a rel:experienced triple; matches the spec and the recorded filter-unbound data."
