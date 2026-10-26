@@ -1,0 +1,24 @@
+date: "2026-10-26"
+title: "Retention Check: Required Join, OPTIONAL, and FILTER Errors over Unbound Variables (local-engine)"
+session:
+  file: —
+  status: completed
+  attempted:
+    - "Dedicated, spoken-only retention check for three concepts due 2026-10-24: \"Basic Graph Patterns: A First SELECT Query (local-engine)\", \"Optional Pattern with an Unbound Variable (local-engine)\", and \"FILTER and Three-Valued Logic over Unbound Variables (local-engine)\"."
+  explored:
+    - "Three predictions against the remembered dataset local-engine/filter-unbound/data.ttl: a two-pattern join, the same join with the second pattern OPTIONAL, and that OPTIONAL query with FILTER (?y != 10 || ?a > 18) and no bound()."
+  tried:
+    - "A Fuseki 6.2.0 container and a tracked file location were prepared under the earlier rule; both were dropped unused when CLAUDE.md was revised mid-sitting to make dedicated checks spoken-only."
+  corrections:
+    - "Gave Alice's ?a binding as 20; the bound term is \"020\"^^xsd:integer as written in the data."
+    - "Predicted the FILTER keeps Ben and Alice and drops Bob and James, then after one round on Bob predicted no rows; per the SPARQL 1.1 section 17.2 truth table Bob (F||T), Alice (E||T) and Ben (E||T) are kept and James (E||F) is dropped."
+  bugs_found: —
+  completed:
+    - "Predicted the two-pattern join result (Bob, Ben) unaided."
+    - "Predicted all four OPTIONAL solutions with ?y unbound for Alice and James, stated as no ?y entry rather than null."
+    - "Judged BGP passed, OPTIONAL passed, FILTER failed."
+  not_completed:
+    - "\"FILTER and Three-Valued Logic over Unbound Variables (local-engine)\" needs a real new exercise after the failed check; one correction round did not close the gap."
+  open_questions: —
+  notes:
+    - "Retention check (kind: retention-check), spoken only, no engine run; verified against filter-unbound's recorded results and the spec's section 17.2 truth table, fetched live. Outcomes: BGP passed and OPTIONAL passed (meta.yml promoted to retained), FILTER failed."

@@ -1,7 +1,7 @@
 concept: "Optional Pattern with an Unbound Variable (local-engine)"
 due_date: "2026-10-24"
-status: pending
-resolution: —
+status: passed
+resolution: dedicated_check
 planned_minutes: 3
-task: —
-result: —
+task: "Spoken only: predicted the solutions of { ?p rel:aged ?a . OPTIONAL { ?p rel:experienced ?y } } against local-engine/filter-unbound/data.ttl, and what Alice's solution mapping contains."
+result: "Passed: predicted all four solutions with ?y unbound (absent, not null) for Alice and James, matching filter-unbound's recorded q1-baseline result; Alice's ?a was given as 20 rather than the bound term \"020\"^^xsd:integer, a literal-term slip not charged to this concept."

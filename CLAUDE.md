@@ -277,31 +277,40 @@ task:
 - **Dedicated check.** Only if still due with no organic evidence credited:
   it takes priority in session selection (see "Session selection") over a
   new topic, but as a short, capped task (`kind: retention-check`), never a
-  full exercise in miniature. No new exercise directory, no notes file
-  (cite the concept's own existing one — nothing new is being derived), no
-  Session sign-off, no Skill assessment or Reference recommendations, no
-  write/verify-agent fork. One small prediction exercising the concept from
-  a different angle — a different dataset or query shape than the original
-  exercise used — attempted without re-reading the original exercise's
-  notes file and with hints withheld more strictly than usual (the point is
+  full exercise in miniature — and never another session in miniature
+  either. No new exercise directory, no notes file (cite the concept's own
+  existing one — nothing new is being derived), no Session sign-off, no
+  Skill assessment or Reference recommendations, no write/verify-agent
+  fork, and, unlike every other exercise here, no new engine, no new
+  dataset or query file, nothing to run at all: this is spoken only, a
+  Socratic recap exactly like "Theory review," just scoped to one specific
+  concept and recorded as a cold-run instead of a review. Ask one or two
+  pointed questions that require predicting or explaining, not writing or
+  running anything — what a specific query would actually return against
+  a dataset you already remember from a prior exercise (cite it by name,
+  don't invent a new one or stand up a new engine to run it on), what a
+  FILTER does when a variable is unbound, why an OPTIONAL join behaves the
+  way it does — with hints withheld more strictly than usual and without
+  re-reading the original exercise's notes file first (the point is
   finding out what actually stuck, not re-teaching it under a different
-  name), then one quick, real verification: the hand-derived expected
-  result compared field-by-field against the actual one, exactly the bar
-  every exercise here is held to, never a softer one just because it's a
-  review. Scheduling it always commits to a planned duration in minutes up
-  front (`.index/cold-runs/<slug>.yml`'s `planned_minutes`, decided
-  alongside `due_date`, not left for later) — five minutes at most, often
-  less for a single narrow recall fact; never open-ended. Checks on
-  closely-linked concepts still share one due date and are taken together
-  as one short sitting rather than several — every concept still judged
-  and recorded passed or failed on its own, each with its own
-  `planned_minutes` summed for the sitting's real budget, not stacked
-  without limit: if a cluster's total is genuinely growing large, split it
-  rather than let one sitting balloon. If running a check honestly needs
-  more than its planned minutes, that's a sign the concept needs a real
-  new exercise instead, not a retention check stretched past its budget;
-  say so explicitly and propose that instead of forcing it into this
-  shape.
+  name). Verify the answer against what's actually true — the real result
+  the original exercise already observed and recorded in its own notes
+  file, or the spec's actual documented behavior — never a fresh engine,
+  dataset, or query just to generate something to check against.
+  Scheduling it always commits to a planned duration in minutes up front
+  (`.index/cold-runs/<slug>.yml`'s `planned_minutes`, decided alongside
+  `due_date`, not left for later) — five minutes at most, and with
+  nothing to set up or write, often just one or two minutes of actual
+  dialogue. Checks on closely-linked concepts still share one due date and
+  are taken together as one short sitting rather than several — every
+  concept still judged and recorded passed or failed on its own, each with
+  its own `planned_minutes` summed for the sitting's real budget, not
+  stacked without limit: if a cluster's total is genuinely growing large,
+  split it rather than let one sitting balloon. If your answer reveals a
+  real gap that one quick question-and-correction round can't close,
+  that's a sign the concept needs a real new exercise instead, not a
+  retention check stretched past its budget; say so explicitly and propose
+  that instead of forcing it into this shape.
 
 Passing, either way, updates that concept's `.index/sessions/<slug>/meta.yml`
 `status` field from `demonstrated` to `retained` (see "Fast index"). Failing

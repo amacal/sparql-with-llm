@@ -1,7 +1,7 @@
 concept: "FILTER and Three-Valued Logic over Unbound Variables (local-engine)"
 due_date: "2026-10-24"
-status: pending
-resolution: —
+status: failed
+resolution: dedicated_check
 planned_minutes: 3
-task: —
-result: —
+task: "Spoken only: predicted which rows FILTER (?y != 10 || ?a > 18) keeps over the OPTIONAL query against local-engine/filter-unbound/data.ttl, without bound()."
+result: "Failed: first predicted Ben and Alice kept with Bob and James dropped, then after one round on Bob predicted no rows; the spec (SPARQL 1.1 section 17.2 truth table) keeps Bob (F||T), Alice (E||T) and Ben (E||T) and drops James (E||F). The per-side T/F/E evaluation was not given; the truth table was supplied from the spec."
