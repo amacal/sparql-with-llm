@@ -199,6 +199,9 @@ writing style"): the observable result, the internal mechanism that
 produced it, and the design rationale behind writing it that way. If you
 want to end the session without completing all three, explicitly ask you to
 do it before signing off. Do not accept "it returned rows" as sufficient.
+A dedicated retention check (see "Retention checks") skips this entirely —
+there's no notes file for it to map onto, and the point is measuring
+unaided recall, not re-teaching it through a three-level dialogue.
 
 ## Pacing and assumed knowledge
 
@@ -258,27 +261,59 @@ write agent's report, the same way a branch or future-target decision
 already is — never mechanical, never skipped just because it's easier not
 to decide.
 
-A due retention check takes priority in session selection (see "Session
-selection") over a new topic: a small, genuinely new task exercising the
-same concept from a different angle — a different dataset or query shape
-than the original exercise used — attempted without re-reading the original
-exercise's notes file and with hints withheld more strictly than usual (the
-point is finding out what actually stuck, not re-teaching it under a
-different name). It's verified the exact same way every other exercise here
-is — the hand-derived expected result compared field-by-field against the
-actual one, never a softer bar just because it's a review. Checks on
-closely-linked concepts share one due date and are taken together, as one
-task that genuinely exercises each of them — every concept still judged and
-recorded passed or failed on its own — so a cluster of foundations costs one
-sitting rather than one sitting each.
+A pending check resolves one of two ways — only one of them a dedicated
+task:
 
-Passing updates that concept's `.index/sessions/<slug>/meta.yml` `status`
-field from `demonstrated` to `retained` (see "Fast index"). Failing doesn't
-just quietly expire the check — it's evidence the concept needs real
-reinforcement, and feeds back into session selection as a priority
-candidate, the same weight as an open gap. Either outcome is recorded in
-`.index/cold-runs/<slug>.yml` and the resolving session's own `.history/`
-entry; a retention check is never silently dropped once due.
+- **Organic evidence.** Fluency doesn't need a staged test if a real one
+  already happened. Whenever closing any later session finds that session's
+  own `uses_concepts.yml` naming a concept with a pending cold-run, and that
+  session applied it correctly and unaided — no hint needed, nothing in its
+  own `corrections`/`bugs_found` tied to it — that use *is* the retention
+  check, passed. Resolve the cold-run right there (`resolution:
+  organic_evidence`), no separate task, no extra session. This is a judgment
+  call stated explicitly in that close's report (which concept, which
+  session, why the use counts as genuinely fluent) — a concept merely
+  mentioned in passing, or only reused with heavy hinting, doesn't qualify.
+- **Dedicated check.** Only if still due with no organic evidence credited:
+  it takes priority in session selection (see "Session selection") over a
+  new topic, but as a short, capped task (`kind: retention-check`), never a
+  full exercise in miniature. No new exercise directory, no notes file
+  (cite the concept's own existing one — nothing new is being derived), no
+  Session sign-off, no Skill assessment or Reference recommendations, no
+  write/verify-agent fork. One small prediction exercising the concept from
+  a different angle — a different dataset or query shape than the original
+  exercise used — attempted without re-reading the original exercise's
+  notes file and with hints withheld more strictly than usual (the point is
+  finding out what actually stuck, not re-teaching it under a different
+  name), then one quick, real verification: the hand-derived expected
+  result compared field-by-field against the actual one, exactly the bar
+  every exercise here is held to, never a softer one just because it's a
+  review. Scheduling it always commits to a planned duration in minutes up
+  front (`.index/cold-runs/<slug>.yml`'s `planned_minutes`, decided
+  alongside `due_date`, not left for later) — five minutes at most, often
+  less for a single narrow recall fact; never open-ended. Checks on
+  closely-linked concepts still share one due date and are taken together
+  as one short sitting rather than several — every concept still judged
+  and recorded passed or failed on its own, each with its own
+  `planned_minutes` summed for the sitting's real budget, not stacked
+  without limit: if a cluster's total is genuinely growing large, split it
+  rather than let one sitting balloon. If running a check honestly needs
+  more than its planned minutes, that's a sign the concept needs a real
+  new exercise instead, not a retention check stretched past its budget;
+  say so explicitly and propose that instead of forcing it into this
+  shape.
+
+Passing, either way, updates that concept's `.index/sessions/<slug>/meta.yml`
+`status` field from `demonstrated` to `retained` (see "Fast index"). Failing
+a dedicated check doesn't just quietly expire it — it's evidence the concept
+needs real reinforcement, and feeds back into session selection as a
+priority candidate, the same weight as an open gap. Every outcome is
+recorded in `.index/cold-runs/<slug>.yml` (`resolution:
+organic_evidence | dedicated_check`); a dedicated check additionally gets
+its own minimal `.history/` entry (`file: —`, same shape as a review,
+`notes` naming it as a retention check and its outcome) — a retention check
+is never silently dropped once due, and never silently resolved without
+stating why.
 
 ## Query verification discipline
 
@@ -875,10 +910,15 @@ Fixed section order, sentence-case headings (`## Worked example`, not
   session. If you want to stop before finishing, ask explicitly: close now
   with the implementation recorded as deferred (`not_completed`), or wait
   until it's done and verified? A review session (no new exercise, see
-  "Theory review") has no such requirement.
+  "Theory review") has no such requirement. Neither does a retention check
+  (see "Retention checks") — organic-evidence credit is folded into
+  whatever session discovered it and needs nothing further here; a
+  dedicated retention-check task needs only its own single quick
+  verification, never full exercise completion.
 
 After the sign-off wrap-up, always provide (never skip, even for short/easy
-sessions):
+sessions) — except a dedicated retention-check task, which skips this too
+(see "Retention checks"):
 1. **Skill assessment** — briefly evaluate your performance this session:
    what you handled well, where precision slipped, what the difficulty level
    revealed. Spoken to you in chat only — never written into `.history/` or
@@ -912,7 +952,14 @@ directory, `Write`/`rm` any future-target files it affects, `Edit` a branch
 file only if this session extends or opens it, revise an older session's
 fields only when specifically warranted.
 
-Two sequential agent calls:
+Unless this is a dedicated retention-check task or an organic-evidence
+credit folded into an ordinary close (see "Retention checks") — either way,
+edit the few known files directly yourself: the cold-run file, the
+concept's `meta.yml`, and for a dedicated check a short `.history/` entry.
+No fork needed — there's no notes file and no new
+`.index/sessions/<slug>/` directory for a second pair of eyes to check.
+
+Otherwise, two sequential agent calls:
 1. **Write agent** (fork, `.skills/session-close.md`) — writes the notes
    file, the new `.history/` entry, and the new `.index/sessions/<slug>/`
    directory (plus any future-target/branch files it touches), keeping raw
