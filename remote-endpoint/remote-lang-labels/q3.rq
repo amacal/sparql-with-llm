@@ -1,0 +1,11 @@
+prefix res: <http://dbpedia.org/resource/>
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+select ?label
+where
+{
+    filter(lang(?label) = "DE")
+    res:Munich rdfs:label ?label .
+}
+limit 1000

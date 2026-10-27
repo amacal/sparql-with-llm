@@ -1,0 +1,6 @@
+title: "Language-Tagged Labels with lang() and langMatches() (remote-endpoint)"
+kind: implementation
+status: demonstrated
+target: remote-endpoint
+file: remote-endpoint/remote-lang-labels/
+date: "2026-10-27"

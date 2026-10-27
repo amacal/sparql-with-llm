@@ -1,0 +1,1 @@
+Selected Munich's 29 DBpedia labels by language with lang() = "de" (2 rows), lang() = "DE" (0 rows) and langMatches(lang(), "DE") (2 rows), then filtered its 2 dbp:source objects with isIRI(?o) || lang(?o) = "en" (both kept, the IRI via T || E) and with && (none kept, the IRI via T && E), matching every prediction

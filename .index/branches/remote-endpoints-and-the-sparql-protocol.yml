@@ -1,6 +1,8 @@
 title: "Remote Endpoints and the SPARQL Protocol"
 sessions:
   - "First Query Against a Remote Public SPARQL Endpoint (remote-endpoint)"
+  - "Language-Tagged Labels with lang() and langMatches() (remote-endpoint)"
 frontier:
-  - "First Query Against a Remote Public SPARQL Endpoint (remote-endpoint)"
-explicit_future_targets: —
+  - "Language-Tagged Labels with lang() and langMatches() (remote-endpoint)"
+explicit_future_targets:
+  - "DATATYPE() of Language-Tagged Literals (rdf:langString)"

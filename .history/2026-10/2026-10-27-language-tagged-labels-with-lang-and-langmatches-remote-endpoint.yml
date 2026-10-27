@@ -1,0 +1,53 @@
+date: "2026-10-27"
+title: "Language-Tagged Labels with lang() and langMatches() (remote-endpoint)"
+session:
+  file: remote-endpoint/remote-lang-labels/
+  status: completed
+  attempted:
+    - "Select a resource's labels by language on a public endpoint with lang() and langMatches(), and observe a lang() type error inside FILTER combined with || and &&"
+  explored:
+    - "Whether one subject and predicate can carry several literals that differ only by language tag, and whether same lexical form with different tags is one term or two"
+    - "RDF Schema 1.1 rdfs:label definition, fetched and quoted verbatim"
+    - "SPARQL 1.1 Query §17.4.2.6 LANG signature and definition, fetched and quoted verbatim"
+    - "SPARQL 1.1 Query §17.4.3.13 langMatches signature and definition (example query omitted), fetched and quoted verbatim"
+    - "RFC 4647 §3.3.1 basic filtering sentence, fetched from the RFC Editor plain-text copy and quoted verbatim"
+    - "SPARQL 1.1 Query §17.3 sentence 'Functions invoked with an argument of the wrong type will produce a type error', quoted verbatim"
+    - "SPARQL 1.1 Query §17.4.2.1 isIRI signature and definition, quoted verbatim"
+    - "SPARQL 1.1 Query §17.2 logical-or and logical-and error sentences, quoted verbatim"
+    - "Return values of LANG(\"München\"@de) and LANG(\"Munich\") as term triples (lexical form, datatype, tag)"
+    - "langMatches argument roles (tag first, range second), worked through the cases (\"de-AT\",\"de\"), (\"de\",\"de-AT\"), (\"en-GB\",\"en\"), (\"den\",\"de\"), (\"de-AT\",\"de-CH\"), (\"aa-YY\",\"bb-CC\"), (\"de-AT\",\"AT\")"
+    - "When to choose exact lang() = \"de-AT\" over langMatches(lang(?label), \"de\")"
+  tried:
+    - "q1 run at limit 1000; completeness accepted from 29 rows under the limit and no X- headers"
+    - "Unfiltered cross-check of res:Munich dbp:source ?o run by Claude in .tmp/ to confirm q5's filter dropped nothing"
+  corrections:
+    - "First described the outcome of lang(?label) = \"DE\" (q3) as up to the engine; restated as a case-sensitive simple-literal comparison returning 0 rows before running, observed 0"
+    - "Described langMatches as splitting the tag and taking the first item; corrected to the RFC 4647 §3.3.1 rule (range equals the tag, or a leading part of it followed by \"-\", case ignored)"
+    - "Predicted langMatches(\"de\", \"de-AT\") true; corrected to false, the range is longer than the tag"
+    - "Gave the return values of langMatches(\"de-AT\",\"de\") and langMatches(\"de\",\"de-AT\") as \"\" and \"AT\"; corrected via the xsd:boolean signature"
+    - "Then gave langMatches(\"de-AT\",\"de\") as false; corrected to true via a character-by-character alignment"
+    - "Restated the rule as the second argument starting with the first; corrected to the first argument (tag) starting with the second (range)"
+    - "In sign-off described q4 as testing dash splitting and prefixing; corrected: Munich's tags had no subtags, q4 showed only case-insensitive matching"
+    - "In sign-off stated that || needs both sides T; corrected to one T on either side being enough"
+    - "Described exact = as the choice for ignoring the region; corrected to exact = being the region-specific choice and langMatches with a short range the region-ignoring one"
+  bugs_found: —
+  completed:
+    - "Wrote q1.rq (res:Munich rdfs:label ?label limit 1000); predicted 20 to 200 labels, all tagged; observed 29 labels, 22 distinct tags, all tagged, no subtags, no X- headers"
+    - "Wrote q2.rq (filter lang(?label) = \"de\"); predicted 2 rows; observed \"U-Bahnhof Thalkirchen\"@de and \"München\"@de"
+    - "Wrote q3.rq (filter lang(?label) = \"DE\"); predicted 0 rows; observed 0"
+    - "Wrote q4.rq (filter langMatches(lang(?label), \"DE\")); predicted 2 rows; observed the same 2 rows as q2"
+    - "Wrote q5.rq (res:Munich dbp:source ?o, filter isIRI(?o) || lang(?o) = \"en\"); predicted all IRIs and all en literals; observed dbr:World_Meteorological_Organization and \"DWD SKlima.de Infoclimat\"@en, the full 2-object set per the unfiltered cross-check"
+    - "Wrote q6.rq (same with &&); predicted 0 rows with the IRI row E and the literal row F; observed 0"
+    - "Answered the three-level sign-off: per-query results; BGP solutions evaluated by FILTER with T/F/E combined by §17.2 and only T kept; langMatches with a short range for any regional variant versus exact = for one specific variant"
+  not_completed:
+    - "DATATYPE() on language-tagged literals (rdf:langString) was planned but not covered"
+    - "The langMatches \"-\" prefix clause and the \"*\" range were reasoned through in dialogue only; no queried data had subtags"
+  open_questions:
+    - "Why dbr:Tentris rdfs:label returns 0 rows on DBpedia, carried from the earlier remote session, not investigated"
+  notes:
+    - "Endpoint: DBpedia, https://dbpedia.org/sparql, server headers Virtuoso/08.03.3334 and 08.03.3335; chosen at plan time for continuity with the earlier remote session's Munich data and its documented result cap and X-SPARQL-MaxRows header"
+    - "Requests were POST with URL-encoded query via curl, Accept: application/sparql-results+json, with a generic User-Agent; responses carried cache-control: max-age=2592000 and no X- headers"
+    - "Topic chosen from the select agent's list: \"Language-Tagged Labels with lang() and langMatches() (remote-endpoint)\""
+    - "q2-q4 place the filter before the triple pattern; q5 and q6 carry no LIMIT (fixed subject and predicate, 2 objects)"
+    - "Claude showed a sketch of q5's query including the filter expression in chat before the user wrote q5.rq, a deviation from the no-query-content rule; the user wrote the file"
+    - "Concept applications relevant to cold-runs already marked failed (left unchanged): FILTER and Three-Valued Logic: T||E and T&&E per row given correctly unaided, FILTER dropping E and F stated unaided, || described as needing both T in sign-off and corrected with a hint. Literal Datatypes and Language Tags: LANG values as (\"de\", xsd:string, none) and (\"\", xsd:string, none) given unaided"

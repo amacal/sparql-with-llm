@@ -1,0 +1,6 @@
+title: "DATATYPE() of Language-Tagged Literals (rdf:langString)"
+status: not-completed
+mentioned_by:
+  - "Language-Tagged Labels with lang() and langMatches() (remote-endpoint)"
+evidence:
+  - ".history/2026-10/2026-10-27-language-tagged-labels-with-lang-and-langmatches-remote-endpoint.yml not_completed: DATATYPE() on language-tagged literals (rdf:langString) was planned but not covered"

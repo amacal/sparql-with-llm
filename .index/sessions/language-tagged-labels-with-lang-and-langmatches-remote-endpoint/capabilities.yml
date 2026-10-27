@@ -1,0 +1,6 @@
+- "select-labels-by-language-tag"
+- "match-language-ranges-with-langmatches"
+- "predict-type-error-propagation-through-logical-operators"
+- "guard-literal-only-functions-with-isiri"
+- "prove-slice-complete-against-limit"
+- "cross-check-filter-against-unfiltered-pattern"
