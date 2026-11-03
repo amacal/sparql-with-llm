@@ -1,0 +1,23 @@
+prefix rel: <http://example.com/relationship/>
+
+select ?person ?worksAt ?employeeOf
+where
+{
+    {
+        select ?person (count(?employer) as ?worksAt)
+        where {
+            ?person rel:name ?name .
+            optional { ?person rel:worksAt ?employer } .
+        }
+        group by ?person
+    }
+
+    {
+        select ?person (count(?employer) as ?employeeOf)
+        where {
+            ?person rel:name ?name .
+            optional { ?person rel:employeeOf ?employer } .
+        }
+        group by ?person
+    }
+}

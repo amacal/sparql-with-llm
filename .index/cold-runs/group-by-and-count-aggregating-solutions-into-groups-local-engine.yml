@@ -1,4 +1,4 @@
 concept: "GROUP BY and COUNT: Aggregating Solutions into Groups (local-engine)"
 due_date: "2026-10-28"
-status: pending
-result: —
+status: failed
+result: "Resolved 2026-11-03 by organic evidence in session \"Subqueries: Counting Two Multi-Valued Properties Without Join Inflation (local-engine)\". Failed: the inflated group was first written as the four pre-join input solutions with COUNT(?a) = 2 (corrected to the four joined solutions and 4), the multiset COUNT receives was given as solutions until a chat-only example showed the evaluated-value multiset {1, 1, 2, 2}, and the duplication was first attributed to projection after grouping. Later uses (no group and so no row for a person with zero matches, an empty multiset counting 0) were correct once these were restored."

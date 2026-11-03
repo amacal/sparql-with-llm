@@ -196,9 +196,20 @@ depth is reached.
 Before a session ends, always prompt you to complete three things, one at a
 time, mapping directly onto the notes file's fixed sections (see "Notes
 writing style"): the observable result, the internal mechanism that
-produced it, and the design rationale behind writing it that way. If you
-want to end the session without completing all three, explicitly ask you to
-do it before signing off. Do not accept "it returned rows" as sufficient.
+produced it, and the design rationale behind writing it that way. Each is
+posed as a transfer question about a small variation not yet seen in the
+session — a hypothetical triple added or removed, a pattern moved into or
+out of an `OPTIONAL`, a modifier swapped — never as a recall of rows,
+counts, or traces already shown in chat. The observable prompt asks for the
+exact result of a session query under that variation (rows, bound versus
+unbound cells, datatypes); the mechanism prompt traces the variation through
+the algebra at the point where it changes something; the rationale prompt
+asks which design survives the variation better, and at what cost. One
+variation may carry all three prompts. The precision bar is unchanged — an
+answer still has to name concrete bindings, never "it dropped some rows" —
+only the material changes, from what was already seen to what follows from
+it. If you want to end the session without completing all three, explicitly
+ask you to do it before signing off.
 
 ## Pacing and assumed knowledge
 

@@ -1,0 +1,61 @@
+date: "2026-11-03"
+title: "Subqueries: Counting Two Multi-Valued Properties Without Join Inflation (local-engine)"
+session:
+  file: local-engine/agg-subquery-counts/
+  status: completed
+  attempted:
+    - "Hand-write queries that count two multi-valued properties per person without the join inflation recorded in agg-group-count q5, first with two grouped subqueries joined on ?person, then keeping every named person with a real 0, checked against a hand-derived expected table on a primary engine plus a silent five-engine panel"
+  explored:
+    - "Recap of Join: compatibility of mappings, the merged solution as the union of two compatible mappings, and why two solutions per side sharing only ?person yield 2 x 2 = 4 joined solutions"
+    - "The multiset of evaluated ?a values COUNT receives over the inflated group, shown via a chat-only COUNT(?c) example with one unbound solution"
+    - "Aggregating each side before joining (one solution per person per side) as the route to a 1 x 1 join"
+    - "§12 Subqueries text and example (alice/bob/carol MIN(?name)), grammar rules [53] GroupGraphPattern, [8] SubSelect, [9] SelectClause, [23] OrderClause and [24] OrderCondition, all fetched live from the raw W3C page and quoted verbatim"
+    - "Why the §12 example's inner :alice row disappears in the join"
+    - "Which dataset cases distinguish a correct counting query: >=2 on each property (Bob), values on one property only (Alice, Ben), none (James), 1 on each as a control (Monica)"
+    - "Fuseki arq.qparse --print=op algebra for q3: join of two project/extend/group/leftjoin branches"
+    - "COUNT(DISTINCT) over the inflated join versus subqueries: product-size cost, and undercounting when two distinct matches share a value (two cities named Springfield)"
+    - "Inner HAVING versus outer FILTER placement for a condition comparing the two subqueries' counts"
+    - "q3 versus q2 plus an outer COALESCE: self-contained subqueries versus evaluating the rel:name anchor once"
+    - "Sign-off posed as a hypothetical sixth person Zoe (3 worksAt, 0 employeeOf) traced through q1, q2 and q3"
+  tried:
+    - "q1 first written with `count(?employer) as ?worksAt` without parentheses in both subqueries; parentheses added per rule [9] before running"
+    - "q4 first ended with `order by ?worksAt desc`; all six engines returned HTTP 400 (Fuseki: Encountered \"<EOF>\" at line 26, column 23)"
+    - "q4 then ended with `order by (desc ?worksAt)`; all six engines returned HTTP 400 (Fuseki: Encountered \" \"desc\" \"desc \"\" at line 26, column 11); changed to `order by desc (?worksAt)`"
+    - "First cp of the dataset failed with `cannot stat` because the session's working directory had been changed to local-engine/; rerun with absolute paths"
+  corrections:
+    - "Judged mappings {?person:x, ?a:1} and {?person:x, ?b:2} incompatible because ?a and ?b differ; corrected: only variables bound in both are compared, so they are compatible"
+    - "Wrote the inflated :x group as the four pre-join input solutions and gave COUNT(?a) = 2; corrected to the four joined solutions and COUNT(?a) = 4"
+    - "Gave the group's solutions when asked for the multiset COUNT receives; after a chat-only example, gave {1, 1, 2, 2}"
+    - "Attributed the duplicated ?a values to projection after grouping; corrected: each ?a solution is compatible with both ?b solutions and so appears in two joined solutions"
+    - "Said a person with one value on each property does not expose inflation because the join is not applicable; corrected: the join applies and gives 1 x 1 = 1 solution, so broken and correct queries agree"
+    - "Predicted q1 returns only Bob (2, 2); observed Bob (2, 2) and Monica (1, 1) on all six engines; Monica's one-and-one case had been overlooked"
+    - "Briefly hypothesised that variable names are shared globally across subqueries, giving Bob (1, 1); retracted after the §12 sentence that only projected variables are in scope"
+    - "Described the outer ?person as passed down to subqueries; restated as subqueries evaluated first over all data and their results joined on ?person"
+    - "Predicted q2 returns 0 for Alice's employeeOf, Ben's worksAt and both of James's counts; observed those cells unbound (keys absent) on all six engines"
+    - "Described q2's missing zeros as zeros that became unbound; restated as no group, so COUNT never ran and no 0 was produced"
+    - "Described Project as making variables named correctly; corrected: Project restricts each solution's domain, and the extend above group does the renaming"
+  bugs_found:
+    - "q1: select expressions written without the parentheses SelectClause rule [9] requires; fixed before running"
+    - "q4: ORDER BY DESC written as `?worksAt desc` and then `(desc ?worksAt)`, both rejected by all six engines; fixed to `desc (?worksAt)` per rule [24]"
+  completed:
+    - "Copied local-engine/agg-group-count/data.ttl verbatim to local-engine/agg-subquery-counts/data.ttl; all six engines stored 18 triples (QLever's count returned xsd:int)"
+    - "Hand-derived the expected table (Bob 2/2, Alice 1/0, Ben 0/1, Monica 1/1, James 0/0) before writing any query"
+    - "q1 (two grouped subqueries joined): observed Bob 2/2 and Monica 1/1 only, xsd:integer, on all six engines"
+    - "q2 (outer rel:name anchor, OPTIONAL around each subquery): observed 5 rows with Alice's employeeOf, Ben's worksAt and James's both counts unbound, on all six engines"
+    - "q3 (rel:name anchor and inner OPTIONAL inside each subquery, subqueries joined directly): predicted and observed the expected table exactly, every count xsd:integer, on all six engines"
+    - "q4 (q3 plus outer FILTER(?worksAt > ?employeeOf) and ORDER BY DESC(?worksAt)): predicted and observed Alice 1/0 only, on all six engines"
+    - "Read q3's algebra from Fuseki arq.qparse and identified Project as the operator that keeps ?employer, ?name and ?.0 out of the outer join"
+    - "Answered the three-level sign-off on the hypothetical Zoe: q1 no row, q2 (Zoe, 3, unbound), q3 (Zoe, 3, 0); the employeeOf branch's one left-join solution giving an empty multiset and COUNT 0; rationale for subqueries over COUNT(DISTINCT) (cost and value-collapse undercount) and q3 over q2 plus COALESCE (self-contained subqueries versus a second anchor scan)"
+  not_completed:
+    - "q2 plus an outer COALESCE was discussed but not written or run"
+    - "Whether q4's row order is guaranteed was asked and not answered (q4 returned a single row)"
+    - "No engine's physical query plan (EXPLAIN-style) was examined for the subquery queries"
+    - "A solution modifier inside a subquery (the §12 motivating LIMIT case) was not tried"
+  open_questions: —
+  notes:
+    - "Primary engine: Apache Jena Fuseki 6.2.0, built locally from the official Maven kit jena-fuseki-docker-6.2.0.zip (SHA-1 7d7af7cc7d706343a23f76caf7d1dc3227d19df2 verified) and run in memory with --file; chosen by the plan agent's live lookup because arq.qparse --print=op prints the subquery's project inside the join"
+    - "Silent panel: Oxigraph 0.5.13, Eclipse RDF4J 6.1.0 (in-memory repository over REST), QLever (adfreiburg/qlever digest sha256:fa1490b99decf09d1d33b3e74327cfe4748d8509a313620513cd00268e153fba), Virtuoso Open Source 7.2.17 (TTLP into urn:agg-subquery-counts:ds, queried with default-graph-uri), Tentris v1.5.0 (proprietary, free for non-commercial use); all agreed with Fuseki on q1-q4 including both q4 parse errors, apart from QLever's xsd:int counts"
+    - "Virtuoso's first TTLP from the bind-mounted /in/data.ttl reported Done but stored 0 triples (DirsAllowed); a load from /database was denied explicitly; loading from a copy in the server's working directory stored 18 triples, and q1-q3 were rerun on it"
+    - "Select agent offered: Subqueries: Counting Two Multi-Valued Properties Without Join Inflation (local-engine); Named Graphs and Quads: N-Quads and TriG Versus a Single Graph (formats); BIND and VALUES: Introducing Bindings Inline (local-engine); DATATYPE() of Language-Tagged Literals (rdf:langString); chosen: the first"
+    - "data.ttl reused verbatim from local-engine/agg-group-count/"
+    - "The first observable sign-off prompt asked to restate q1-q3 results; the user objected to recall-style sign-off; it was re-posed as the hypothetical Zoe, and CLAUDE.md 'Session sign-off' was reworded with the user's approval so all three sign-off prompts are transfer questions about an unseen variation"

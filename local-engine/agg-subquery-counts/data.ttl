@@ -1,0 +1,32 @@
+@prefix ppl: <http://example.com/people/> .
+@prefix cmp: <http://example.com/company/> .
+@prefix rel: <http://example.com/relationship/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ppl:Bob
+    rel:name "Bob" ;
+    rel:age 30 ;
+    rel:height 193 ;
+    rel:worksAt cmp:ID5 ;
+    rel:employeeOf cmp:ID5 ;
+    rel:worksAt cmp:Tentris ;
+    rel:employeeOf cmp:Tentris .
+
+ppl:Alice
+    rel:name "Alice" ;
+    rel:worksAt cmp:Tentris .
+
+ppl:Ben
+    rel:name "Ben" ;
+    rel:age 40 ;
+    rel:employeeOf cmp:Microsoft .
+
+ppl:Monica
+    rel:name "Monica" ;
+    rel:worksAt cmp:Oracle ;
+    rel:employeeOf [] .
+
+ppl:James
+    rel:name "James" ;
+    rel:age 16 ;
+    rel:height 160 .

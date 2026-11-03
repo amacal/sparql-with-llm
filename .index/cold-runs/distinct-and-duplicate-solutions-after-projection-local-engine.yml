@@ -1,4 +1,4 @@
 concept: "DISTINCT and Duplicate Solutions after Projection (local-engine)"
 due_date: "2026-10-28"
-status: pending
-result: —
+status: passed
+result: "Resolved 2026-11-03 by organic evidence in session \"Subqueries: Counting Two Multi-Valued Properties Without Join Inflation (local-engine)\". Passed: unprompted, named deduplication cost as the price of COUNT(DISTINCT) over the inflated join, and, given the scenario of two distinct cities with the same name, stated without a hint or correction that DISTINCT collapses them to one value."

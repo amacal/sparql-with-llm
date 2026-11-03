@@ -1,0 +1,6 @@
+title: "Subqueries: Counting Two Multi-Valued Properties Without Join Inflation (local-engine)"
+kind: implementation
+status: demonstrated
+target: local-engine
+file: local-engine/agg-subquery-counts/
+date: "2026-11-03"

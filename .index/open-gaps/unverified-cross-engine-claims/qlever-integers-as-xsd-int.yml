@@ -6,3 +6,4 @@ evidence:
   - "local-engine/modifier-distinct.md Edge cases"
   - "local-engine/agg-having.md Engine panel outcomes"
   - ".history/2026-10/2026-10-25-ask-and-construct-query-forms-beyond-select-local-engine.yml notes"
+  - ".history/2026-11/2026-11-03-subqueries-counting-two-multi-valued-properties-without-join-inflation-local-engine.yml notes (digest fa1490b9, subquery COUNT results as xsd:int where Fuseki 6.2.0, Oxigraph 0.5.13, RDF4J 6.1.0, Virtuoso 7.2.17 and Tentris v1.5.0 returned xsd:integer)"

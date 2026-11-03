@@ -1,4 +1,4 @@
 concept: "ORDER BY with LIMIT and OFFSET: Ordered Slices of a Solution Sequence (local-engine)"
 due_date: "2026-10-28"
-status: pending
-result: —
+status: failed
+result: "Resolved 2026-11-03 by organic evidence in session \"Subqueries: Counting Two Multi-Valued Properties Without Join Inflation (local-engine)\". Failed: q4's descending order was written as `order by ?worksAt desc` and then `order by (desc ?worksAt)`, both rejected by all six engines, and was fixed to `desc (?worksAt)` only by reading grammar rules [23]-[24] quoted from the spec. The question of whether q4's order was guaranteed went unanswered. LIMIT and OFFSET were not used."
