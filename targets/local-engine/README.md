@@ -25,7 +25,11 @@ The devcontainer talks to the host's Docker daemon (Docker-outside-of-Docker),
 so a `-v` bind-mount source must be the *host*-side path of this workspace,
 not `/workspaces/...` (which doesn't exist on the host — Docker would
 silently create an empty directory there instead). Look it up fresh each
-sitting, from inside the devcontainer:
+sitting, from inside the devcontainer, with the repo root as the working
+directory — the lookup matches on `$PWD`. Every command Claude runs leaves
+the shell back at the repo root afterward (a `cd` elsewhere stays inside
+that one command), since your own `! <command>` lines run in the same
+shell and are written against repo-root-relative paths:
 
 ```bash
 HOST_WS=$(docker inspect "$(hostname)" \
@@ -125,7 +129,11 @@ terms both. An engine is free to canonicalize literals, regenerate blank
 node labels, or collapse triples that become identical on load, and a
 query result alone can't distinguish "the engine stored something
 different" from "the engine matched differently" — the dump is what
-separates the two.
+separates the two. Run this check on every engine in the sitting, panel
+included, before trusting any of its query results: a loader can report
+success while storing nothing (a file-path access restriction in the
+engine's own config is the usual cause), and an empty store then answers
+every query with a plausible-looking empty result.
 
 ## Query it
 
