@@ -1,0 +1,5 @@
+claim: "A type error inside an aggregate makes that group's aggregate an error (unbound via Extend, or a dropped group via HAVING) without failing the query; Virtuoso fails the whole request with HTTP 500 when such an error occurs under an explicit GROUP BY, though it returns the spec's unbound row for the same error in an implicit group"
+status: "observed on Virtuoso 7.2.17 in one sitting: q9 (GROUP BY ?workplace, HAVING (sum(?age) >= 0), one group containing a blank-node value) returned HTTP 500 `SR087: Non numeric argument(s) to arithmetic operation '+'`; q4 (same error, no GROUP BY) returned one row with the sum unbound; the other six engines returned the IBM row for q9"
+evidence:
+  - ".history/2026-11/2026-11-14-aggregates-beyond-count-sum-avg-min-max-group-concat-and-sample-local-engine.yml notes (q9)"
+  - "local-engine/agg-set-functions.md Observable behavior (q4, q9)"

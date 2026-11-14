@@ -3,7 +3,8 @@ sessions:
   - "GROUP BY and COUNT: Aggregating Solutions into Groups (local-engine)"
   - "HAVING: Filtering Aggregated Groups (local-engine)"
   - "Subqueries: Counting Two Multi-Valued Properties Without Join Inflation (local-engine)"
+  - "Aggregates Beyond COUNT: SUM, AVG, MIN, MAX, GROUP_CONCAT and SAMPLE (local-engine)"
 frontier:
   - "Subqueries: Counting Two Multi-Valued Properties Without Join Inflation (local-engine)"
-  - "HAVING: Filtering Aggregated Groups (local-engine)"
+  - "Aggregates Beyond COUNT: SUM, AVG, MIN, MAX, GROUP_CONCAT and SAMPLE (local-engine)"
 explicit_future_targets: —

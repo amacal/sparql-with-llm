@@ -1,0 +1,9 @@
+prefix rel: <http://example.com/relationship/>
+prefix ppl: <http://example.com/people/>
+
+select (min(?age) as ?minAge) (max(?age) as ?maxAge)
+where
+{
+    filter(?person = ppl:Monica || ?person = ppl:Bob || ?person = ppl:Ben) .
+    ?person rel:age ?age .
+}

@@ -1,0 +1,5 @@
+claim: "SPARQL 1.1 gives Sum(S) = \"0\"^^xsd:integer when card[S] = 0 and Avg(M) = \"0\"^^xsd:integer when Count(M) = 0, so SUM and AVG over the implicit group of zero matches are bound to 0; Virtuoso leaves both unbound"
+status: "observed on Virtuoso 7.2.17 in one sitting; Fuseki 6.2.0, Oxigraph 0.5.13, RDF4J 6.1.0, Tentris v1.5.0 and MillenniumDB returned \"0\"^^xsd:integer, QLever \"0\"^^xsd:int"
+evidence:
+  - ".history/2026-11/2026-11-14-aggregates-beyond-count-sum-avg-min-max-group-concat-and-sample-local-engine.yml notes (q8)"
+  - "local-engine/agg-set-functions.md Observable behavior (q8)"

@@ -1,0 +1,68 @@
+date: "2026-11-14"
+title: "Aggregates Beyond COUNT: SUM, AVG, MIN, MAX, GROUP_CONCAT and SAMPLE (local-engine)"
+session:
+  file: local-engine/agg-set-functions/
+  status: completed
+  attempted:
+    - "Hand-write one query per case for the SPARQL 1.1 set functions SUM, AVG, MIN, MAX, GROUP_CONCAT and SAMPLE (datatype promotion, an error value inside an aggregate, an unbound value via OPTIONAL, ordering across kinds of term, unspecified order and choice, the implicit group over zero matches, HAVING over SUM), each predicted before running on a primary engine plus a silent six-engine panel"
+  explored:
+    - "Recap of M(Ω), ListEval((unbound)) = (error), Flatten and Count's remove-error step on a chat-only ex:red example (values 1, 1, 2 and one unbound)"
+    - "§18.5.1.3 Sum, §18.5.1.4 Avg, §18.5.1.5-6 Min/Max, §18.5.1.7 GroupConcat, §18.5.1.8 Sample, §18.5.1 Aggregation and the Extend definition, all fetched live from the raw W3C page"
+    - "F&O 2007 §6.2 operators on numeric values (promotion ladder, op:numeric-divide integer/integer returning xs:decimal) and Turtle §2.5.2 numeric abbreviations, fetched live"
+    - "Grammar rule [9] SelectClause, fetched live, for the missing AS in q1"
+    - "SPARQL §15.1 fixed order of kinds of term (unbound < blank node < IRI < literal), fetched live, for MIN/MAX"
+    - "Fuseki arq.qparse --print=op algebra for q2 (group () with hidden ?.0, then extend) and the §18.2.4.1 rationale for computing an aggregate into a hidden variable"
+    - "Lexical form versus value for \"65\"^^xsd:decimal versus \"65.0\"^^xsd:decimal"
+    - "Design alternatives for keeping errors out of SUM: FILTER(BOUND(?age)) versus FILTER(?age + 0 = ?age), and what COUNT(*) loses after filtering"
+    - "Why Sum and GroupConcat have values on empty input while Min/Max/Sample are errors (identity elements)"
+    - "A MAX tie between 40 (integer) and 40.0 (decimal), reasoned through in chat only"
+    - "Sign-off posed as a hypothetical change of Monica's age from _:unknown to 1.5e1, traced through q9 (observable, mechanism, HAVING-side-effect versus WHERE-filter design)"
+  tried:
+    - "Dataset first built with no shared grouping property, then with rel:worksAt added; several rounds of computing M per company showed no group was all-integer or integers-plus-decimal; switched to one FILTER-selected query per case with no GROUP BY instead of regrouping the data"
+    - "q1 first written as `select sum(?age)` without parentheses or AS; Fuseki returned HTTP 200 with variable .1, Oxigraph returned `Error at 4:16: expected DISTINCT`; fixed to `(sum(?age) as ?totalAge)`"
+    - "q5 first written as a copy of q4 with Alice and no OPTIONAL; rewritten with a required rel:name and OPTIONAL rel:age, and COUNT added; AVG was not added"
+    - "q8 first written with no filter (matching five people); a filter on the absent ppl:Adrian was added"
+    - "q9 first written with the ppl:Adrian filter carried over from q8 and no HAVING; HAVING (sum(?age) >= 0) added and the filter removed"
+  corrections:
+    - "Described the unbound value in the ex:red recap as not seen by COUNT; corrected: M holds (error) for it and Count's own definition removes errors"
+    - "Stated the SUM of integers is xsd:integer because the base-case 0 is an integer; corrected: the result type follows both operands of each op:numeric-add, so a decimal operand promotes the result"
+    - "Guessed that the left operand's type decides the result; corrected with the F&O §6.2 rule that the lower-ranked operand is promoted to the other's type"
+    - "Treated xs: and xsd: as a difference between engines; corrected: both are prefixes for the same namespace, and xsd:int versus xsd:integer is the real distinction"
+    - "Predicted q2 returns xsd:double because Turtle reads 40.0 as double; observed xsd:decimal on all seven engines; corrected via Turtle §2.5.2 (only an exponent makes a bare number a double)"
+    - "Predicted q3 performs integer division (71/3 = 13); observed xsd:decimal 23.666... on all seven engines; corrected via the op:numeric-divide exception"
+    - "Predicted q5 COUNT(?age) = 2; observed 1 on all seven engines; 2 is COUNT(*), the card[Ω] special case"
+    - "Predicted q5 SUM = 30; observed unbound on Fuseki, Oxigraph, QLever, Tentris and MillenniumDB (Sum has no remove-error step), 30 on RDF4J and Virtuoso"
+    - "Predicted q6 MIN = 30 and MAX = the blank node (SQL nulls-last); observed MIN = the blank node and MAX = 40.0 on all seven engines; corrected via the §15.1 order of kinds of term"
+    - "Described SAMPLE as random; restated as not required to be deterministic, a fixed choice also being conforming"
+    - "Predicted q8 AVG = error, MIN/MAX = 0, GROUP_CONCAT unbound; observed AVG \"0\"^^xsd:integer, MIN/MAX unbound, GROUP_CONCAT \"\" on six engines"
+    - "Described the error inside HAVING as unbound; restated: HAVING evaluates error >= 0 directly, which is an error and drops the group; unbound arises only when Extend skips an error"
+    - "Sign-off observable answer first gave IBM only with 45.0, then mixed group membership with an earlier unapplied company swap and slipped arithmetic; final answer Tentris 70 xsd:double and IBM 40.0 xsd:decimal"
+  bugs_found:
+    - "q1: SELECT expression written without parentheses and AS, violating grammar rule [9]; accepted silently by Fuseki and Virtuoso, rejected by the other five engines; fixed"
+  completed:
+    - "Wrote data.ttl (18 triples); all seven engines stored 18 triples"
+    - "q1 SUM over three integers: predicted and observed \"71\"^^xsd:integer (QLever xsd:int)"
+    - "q2 SUM of 40.0 and 25: observed \"65.0\"^^xsd:decimal (Oxigraph and Virtuoso \"65\")"
+    - "q3 AVG over three integers: observed xsd:decimal on all engines with seven different digit lengths"
+    - "q4 SUM with a blank-node value: predicted and observed one row with the sum unbound (empty binding object) on all seven engines"
+    - "q5 COUNT and SUM with one unbound value via OPTIONAL: observed COUNT 1 everywhere and the 5-to-2 SUM split"
+    - "q6 MIN/MAX over a blank node, an integer and a decimal: observed MIN _:bnode and MAX 40.0 on all seven engines"
+    - "q7 GROUP_CONCAT with separator \".\" and SAMPLE over three names: observed three concatenation orders and two samples, all members of the input"
+    - "q8 seven aggregates over an implicit group with zero matches: predicted one row; observed the spec's empty-input values on six engines"
+    - "q9 GROUP BY ?workplace with HAVING (sum(?age) >= 0), written without hints: predicted and observed IBM 40.0 only on six engines"
+    - "Answered the three-level sign-off on the hypothetical 1.5e1 change: Tentris 70 xsd:double and IBM 40.0 xsd:decimal; the HAVING comparison changing from error to true; a HAVING-side-effect design versus a WHERE filter (no row then 70 double versus 55 integer then 70 double)"
+  not_completed:
+    - "AVG was not included in q5, so AVG over a group with an unbound value was not run"
+    - "The MAX tie between 40 and 40.0 was not run (would need a dataset change)"
+    - "Combining a filtered and an unfiltered aggregation via subqueries was suggested and not written"
+  open_questions:
+    - "How many rows q9 would return with the ppl:Adrian filter still in place (explicit GROUP BY over zero matches) was asked and not answered; the filter was removed instead"
+    - "What would make a group appear for James (who has no rel:worksAt) was asked and not answered"
+    - "The overflow case for xsd:int (two ages of 2000000000) was asked and not answered"
+  notes:
+    - "Primary engine: Apache Jena Fuseki 6.2.0, built from the official jena-fuseki-docker-6.2.0 kit and run in memory with --file; algebra via arq.qparse --print=op; kept by the plan agent's fresh live lookup for its spec-shaped Group/Extend algebra"
+    - "Silent panel: Oxigraph 0.5.13, Eclipse RDF4J 6.1.0 (in-memory repository over REST), QLever (adfreiburg/qlever digest sha256:565dd62bf84bb07bacd32c2d6d185362ea191547ff3443e9fd5b94f79d39c6d1), Virtuoso Open Source 7.2.17 (named graph urn:agg-set-functions:ds, queried with default-graph-uri), Tentris v1.5.0, MillenniumDB (new to the panel, built from its repository Dockerfile at commit f35032e); GraphDB excluded because its free license must be requested by email"
+    - "Panel outcome: all seven agreed on q4 and q6 and returned conforming q7 results; QLever returned xsd:int for integer results (q1, q5 count, q8); Oxigraph and Virtuoso normalized decimal lexical forms (\"40\", \"65\"); q3 digit lengths differed on every engine; q5 SUM 30 on RDF4J and Virtuoso; q8 Virtuoso SUM/AVG unbound; q9 Virtuoso HTTP 500"
+    - "In the setup smoke test (not a session query), MillenniumDB's GROUP_CONCAT over integers returned unbound"
+    - "Select agent offered: Aggregates Beyond COUNT: SUM, AVG, MIN, MAX, GROUP_CONCAT and SAMPLE (local-engine); BIND and VALUES: Introducing Bindings Inline (local-engine); DATATYPE() of Language-Tagged Literals (rdf:langString); SPARQL Update: INSERT DATA, DELETE DATA and DELETE/INSERT WHERE (local-engine); SPARQL Result Formats: One SELECT as XML, JSON, CSV and TSV (local-engine); chosen: the first"
+    - "The user chose one FILTER-selected query per case over regrouping the dataset by company, after the data-shape iteration ran long"

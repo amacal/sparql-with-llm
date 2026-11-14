@@ -1,0 +1,11 @@
+prefix rel: <http://example.com/relationship/>
+prefix ppl: <http://example.com/people/>
+
+select ?workplace (sum(?age) as ?totalAge)
+where
+{
+    ?person rel:worksAt ?workplace .
+    ?person rel:age ?age .
+}
+group by ?workplace
+having (sum(?age) >= 0)

@@ -1,0 +1,6 @@
+title: "Aggregates Beyond COUNT: SUM, AVG, MIN, MAX, GROUP_CONCAT and SAMPLE (local-engine)"
+kind: implementation
+status: demonstrated
+target: local-engine
+file: local-engine/agg-set-functions/
+date: "2026-11-14"

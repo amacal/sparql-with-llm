@@ -1,0 +1,5 @@
+claim: "Grammar rule [9] SelectClause requires a projected expression to be written ( Expression AS Var ); `SELECT sum(?age)` is not SPARQL 1.1, yet Fuseki answers it with an engine-named variable .1 and Virtuoso with callret-0"
+status: "observed in one sitting: Fuseki 6.2.0 and Virtuoso 7.2.17 HTTP 200; Oxigraph 0.5.13, RDF4J 6.1.0, QLever, Tentris v1.5.0 and MillenniumDB HTTP 400"
+evidence:
+  - ".history/2026-11/2026-11-14-aggregates-beyond-count-sum-avg-min-max-group-concat-and-sample-local-engine.yml tried and bugs_found (q1)"
+  - "local-engine/agg-set-functions.md Observable behavior (q1)"

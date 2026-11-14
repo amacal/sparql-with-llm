@@ -1,0 +1,9 @@
+prefix rel: <http://example.com/relationship/>
+prefix ppl: <http://example.com/people/>
+
+select (sum(?age) as ?totalAge)
+where
+{
+    filter(?person = ppl:Ben || ?person = ppl:John) .
+    ?person rel:age ?age .
+}

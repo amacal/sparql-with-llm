@@ -1,0 +1,4 @@
+- "Basic Graph Patterns: A First SELECT Query (local-engine)"
+- "Optional Pattern with an Unbound Variable (local-engine)"
+- "HAVING: Filtering Aggregated Groups (local-engine)"
+- "ORDER BY with LIMIT and OFFSET: Ordered Slices of a Solution Sequence (local-engine)"

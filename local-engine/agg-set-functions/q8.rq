@@ -1,0 +1,9 @@
+prefix rel: <http://example.com/relationship/>
+prefix ppl: <http://example.com/people/>
+
+select (count(?age) as ?ageCount) (sum(?age) as ?totalAge) (avg(?age) as ?averageAge) (min(?age) as ?minAge) (max(?age) as ?maxAge) (group_concat(?age; separator=".") as ?allAges) (sample(?age) as ?sampleAge)
+where
+{
+    filter(?person = ppl:Adrian) .
+    ?person rel:age ?age .
+}

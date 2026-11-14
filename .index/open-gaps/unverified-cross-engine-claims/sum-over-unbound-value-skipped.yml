@@ -1,0 +1,5 @@
+claim: "SPARQL 1.1 §18.5.1.3 defines Sum over Flatten(M) with no remove-error step, so SUM over a group where one solution leaves the argument unbound (ListEval gives (error)) is an error and the projected variable is unbound; RDF4J and Virtuoso instead skip the unbound value and return the sum of the rest"
+status: "observed in one sitting: Fuseki 6.2.0, Oxigraph 0.5.13, QLever, Tentris v1.5.0 and MillenniumDB (f35032e) return the sum unbound; RDF4J 6.1.0 and Virtuoso 7.2.17 return 30 for {30, unbound}"
+evidence:
+  - ".history/2026-11/2026-11-14-aggregates-beyond-count-sum-avg-min-max-group-concat-and-sample-local-engine.yml corrections (q5)"
+  - "local-engine/agg-set-functions.md Observable behavior (q5)"

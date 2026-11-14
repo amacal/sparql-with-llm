@@ -1,0 +1,9 @@
+prefix rel: <http://example.com/relationship/>
+prefix ppl: <http://example.com/people/>
+
+select (group_concat(?name; separator=".") as ?names) (sample(?name) as ?sampleName)
+where
+{
+    filter(?person = ppl:Monica || ?person = ppl:Bob || ?person = ppl:Ben) .
+    ?person rel:name ?name .
+}

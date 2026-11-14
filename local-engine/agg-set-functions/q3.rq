@@ -1,0 +1,9 @@
+prefix rel: <http://example.com/relationship/>
+prefix ppl: <http://example.com/people/>
+
+select (avg(?age) as ?averageAge)
+where
+{
+    filter(?person = ppl:Bob || ?person = ppl:James || ?person = ppl:John) .
+    ?person rel:age ?age .
+}
