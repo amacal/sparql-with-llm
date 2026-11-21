@@ -1,0 +1,5 @@
+claim: "SPARQL 1.1 §10.1 forbids a BIND whose variable has already been used in the group up to that point, so such a query is malformed; Virtuoso accepted it and returned an empty result"
+status: "observed on Virtuoso Open Source 7.2.18-dev in one sitting: q5 (?person rel:age ?age . OPTIONAL height . BIND(?height / ?age AS ?age)) returned HTTP 200 with 0 rows; Fuseki 6.2.0, Oxigraph 0.5.13, RDF4J 6.1.0, QLever, Tentris 1.6.0 and MillenniumDB returned HTTP 400; why Virtuoso produced 0 rows was not investigated"
+evidence:
+  - ".history/2026-11/2026-11-21-bind-and-values-introducing-bindings-inline-local-engine.yml notes and open_questions (q5)"
+  - "local-engine/assign-bind-values.md Edge cases"

@@ -1,0 +1,5 @@
+claim: "\"030\"^^xsd:integer and \"30\"^^xsd:integer are distinct RDF terms, so a join on terms (BGP or VALUES compatibility) treats them as different; engines that rewrite literals to canonical form when loading change which solutions such a join returns"
+status: "observed in one sitting: Oxigraph 0.5.13, QLever, Virtuoso 7.2.18-dev, Tentris 1.6.0 and MillenniumDB stored \"030\" as \"30\" and matched VALUES (30 UNDEF) to Monica in q6 (2 rows, Virtuoso 3); Fuseki 6.2.0 and RDF4J 6.1.0 kept \"030\" and returned 1 row; FILTER(?age IN (30)) in q7, comparing by value, returned the same 2 rows on all seven engines"
+evidence:
+  - ".history/2026-11/2026-11-21-bind-and-values-introducing-bindings-inline-local-engine.yml notes (load checks, q6, q7)"
+  - "local-engine/assign-bind-values.md Edge cases and Worked example"

@@ -1,0 +1,5 @@
+claim: "A BIND placed before an OPTIONAL is Extend over only the preceding pattern (§18.2.2.6), so an expression reading the optional variable errors and leaves the BIND variable unbound in every row; MillenniumDB bound a value for a row that has no such variable, apparently computed from another row's data"
+status: "observed on MillenniumDB built from repository HEAD 126c387 in one sitting: q4 (?person rel:age ?age . BIND(?height / ?age AS ?progress) OPTIONAL { ?person rel:height ?height }) returned Ben (age 40.0, no height) with ?progress \"3.75E0\"^^xsd:double, which equals Monica's height 150 divided by Ben's age 40; all other engines left every ?progress unbound"
+evidence:
+  - ".history/2026-11/2026-11-21-bind-and-values-introducing-bindings-inline-local-engine.yml notes (q4)"
+  - "local-engine/assign-bind-values.md Edge cases"

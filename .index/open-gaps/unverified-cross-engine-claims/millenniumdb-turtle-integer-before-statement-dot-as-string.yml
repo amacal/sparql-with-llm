@@ -1,0 +1,5 @@
+claim: "In Turtle, `193.` at the end of a statement is the INTEGER 193 followed by the statement terminator (a DECIMAL needs digits after the dot); MillenniumDB's loader stored it as the plain string \"193\""
+status: "observed on MillenniumDB built from repository HEAD 126c387 in one sitting: the N-Triples dump showed `<…/Bob> <…/height> \"193\" .` and DATATYPE returned xsd:string, so arithmetic on it raised an error on that engine only (q1-q3); Fuseki 6.2.0, Oxigraph 0.5.13, RDF4J 6.1.0, Virtuoso and Tentris 1.6.0 stored xsd:integer and QLever xsd:int"
+evidence:
+  - ".history/2026-11/2026-11-21-bind-and-values-introducing-bindings-inline-local-engine.yml notes (load checks)"
+  - "local-engine/assign-bind-values.md Edge cases"

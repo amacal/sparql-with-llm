@@ -1,0 +1,9 @@
+prefix rel: <http://example.com/relationship/>
+
+select ?person ?age ?height ?progress
+where
+{
+    values (?age ?height) { (30 UNDEF) (UNDEF 150) (99 193) } .
+    ?person rel:age ?age .
+    ?person rel:height ?height .
+}

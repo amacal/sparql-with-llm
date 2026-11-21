@@ -1,0 +1,9 @@
+prefix rel: <http://example.com/relationship/>
+
+select ?person ?age ?height ?progress
+where
+{
+    ?person rel:age ?age .
+    ?person rel:height ?height .
+    filter (?age in (30) || ?height in (150)) .
+}

@@ -1,0 +1,6 @@
+title: "BIND and VALUES: Introducing Bindings Inline (local-engine)"
+kind: implementation
+status: demonstrated
+target: local-engine
+file: local-engine/assign-bind-values/
+date: "2026-11-21"

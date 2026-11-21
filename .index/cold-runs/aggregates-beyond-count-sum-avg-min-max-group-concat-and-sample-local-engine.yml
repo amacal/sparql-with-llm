@@ -1,4 +1,4 @@
 concept: "Aggregates Beyond COUNT: SUM, AVG, MIN, MAX, GROUP_CONCAT and SAMPLE (local-engine)"
 due_date: "2026-11-28"
-status: pending
-result: —
+status: failed
+result: "Tested organically 2026-11-21 in \"BIND and VALUES: Introducing Bindings Inline (local-engine)\" (uses_concepts), failed: predicted double divided by integer as xsd:decimal (observed xsd:double, the integer promoted to the top of the ladder), and guessed an expression error inside Extend might bind an explicit error value before Extend's second clause (row unchanged, variable absent) was quoted. Integer promoted to decimal for 1 - 0.2 and 42 * 0.8, integer / integer as xsd:decimal, and SUM's empty-input 0 were correct unaided."

@@ -1,0 +1,5 @@
+claim: "SPARQL 1.1 arithmetic follows F&O op:numeric-divide, so xsd:integer / xsd:integer returns xsd:decimal, and a plain string operand raises a type error (leaving a BIND variable unbound); Virtuoso returned integer division and treated a non-numeric string as a number"
+status: "observed on Virtuoso Open Source 7.2.18-dev in one sitting: BIND(?height / ?age AS ?progress) gave \"6\"^^xsd:integer for 193 / 30 and \"0\"^^xsd:integer for \"160 cm\" / 16 (integer result in q1-q3, string case in q1-q2); Fuseki 6.2.0, Oxigraph 0.5.13, RDF4J 6.1.0, QLever and Tentris 1.6.0 returned xsd:decimal for 193 / 30 and all six other engines left the string case unbound (MillenniumDB left Bob unbound too, having stored 193 as a string)"
+evidence:
+  - ".history/2026-11/2026-11-21-bind-and-values-introducing-bindings-inline-local-engine.yml notes (panel outcome q1-q3)"
+  - "local-engine/assign-bind-values.md Edge cases"

@@ -1,0 +1,55 @@
+date: "2026-11-21"
+title: "BIND and VALUES: Introducing Bindings Inline (local-engine)"
+session:
+  file: local-engine/assign-bind-values/
+  status: completed
+  attempted:
+    - "Hand-write queries introducing BIND (computed variable, expression errors, position in the group, the in-scope rule) and VALUES (single and multi-variable inline data, UNDEF, join by RDF term versus FILTER IN by value), each predicted before running on a primary engine plus a silent six-engine panel"
+  explored:
+    - "§10.1 BIND and its book-discount example, §18.5 Extend (value, error and undefined clauses), §17.2 logical-or/logical-and rules and T/F/E truth table, §18.2.2.6 group translation loop, §10.2 VALUES with its §10.2.2 examples, §18.3 compatible mappings (same RDF term), and §17.4.1.9 IN, all fetched live from the raw W3C page"
+    - "Exact term of ?price for :book1 in the spec's BIND example, operation by operation (integer promoted to decimal, \"33.6\"^^xsd:decimal), and the FILTER outcome false"
+    - "Chat-only variation of the spec example with a :book3 lacking a discount under OPTIONAL: BIND leaves ?price unbound, FILTER(?price < 20) errors and drops the row, and FILTER(?price < 20 || ?p > 25) keeps all three books (F||T, T||F, E||T)"
+    - "SUM's empty-input 0 from the aggregates session contrasted with an unbound arithmetic operand"
+    - "Which panel deviations were evaluation errors (Virtuoso) versus correct evaluation over differently stored data (QLever, MillenniumDB)"
+    - "The spec's VALUES examples traced as mappings: :book3 incompatible on the shared ?book, and the UNDEF row {?title} compatible with :book1's solution"
+    - "Sign-off variation, reasoned only: a fourth VALUES row (UNDEF UNDEF) added to q6, giving 5 rows with Bob twice from pairs ({?age 30}, Bob) and ({}, Bob); design comparison of VALUES with (UNDEF UNDEF) against an always-true IN/|| branch, including using VALUES-driven row duplication for later grouping in the manner of SQL GROUPING SETS"
+  tried:
+    - "data.ttl first written with a height on every subject; Ben's height removed so an OPTIONAL leaves a variable unbound"
+    - "q3 written with the BIND kept and the same expression added as a FILTER (rather than replacing the BIND), keeping ?progress visible"
+    - "q5 written as bind(?height / ?age as ?age) to break the §10.1 in-scope rule"
+  corrections:
+    - "Gave ?price's computation as 'a math expression' and then 'larger than 20'; restated as the exact term \"33.6\"^^xsd:decimal"
+    - "Reasoned that an unbound ?discount behaves like 0, recalling SUM's empty-input 0; corrected: an unbound operand raises a type error, and 0 is only SUM's value on empty input"
+    - "Guessed the BIND variable might hold an explicit error value; corrected via Extend's second clause: the row is returned unchanged with the variable absent"
+    - "Stated that || returns E only when both sides are errors, then that E || F = F; corrected by evaluating T||F and F||F for the unknown side and by the §17.2 table: E || F = E"
+    - "Predicted Monica's q1 ?progress as xsd:decimal; observed \"5.0e0\"^^xsd:double; corrected: the integer operand is promoted to double, the top of the ladder"
+    - "Predicted q4 (BIND before the OPTIONAL) would return the same as q2; observed every ?progress unbound with heights present; diagnosed via the §18.2.2.6 loop"
+    - "Listed ?progress in the variable set after q4's Extend step; corrected: ?height is not yet bound there, so ?progress is never added"
+    - "Predicted q6 would match Monica through age 30 and through height 150 (3 rows); observed Bob only on Fuseki; corrected: compatibility requires the same RDF term, and \"030\"^^xsd:integer versus 30 and integer 150 versus \"150\"^^xsd:double are different terms"
+    - "Sign-off: first predicted 2 rows with no duplicates for q6 plus (UNDEF UNDEF); corrected to 5 rows with Bob twice after deriving that {} is compatible with every solution"
+  bugs_found: —
+  completed:
+    - "Wrote data.ttl (9 triples); Fuseki stored all 9 with \"030\" kept and Bob's `193.` as xsd:integer"
+    - "q1 BIND over required patterns: predicted 4 rows and the bound/unbound pattern; observed Bob \"6.433333333333333333333333\"^^xsd:decimal, Monica \"5.0e0\"^^xsd:double, Alice and James unbound"
+    - "q2 BIND after OPTIONAL: predicted and observed 5 rows, Ben with height and progress unbound"
+    - "q3 FILTER on the same expression: predicted and observed Bob and Monica only"
+    - "q4 BIND before OPTIONAL: observed 5 rows, heights bound, every ?progress unbound"
+    - "q5 BIND to an in-scope variable: predicted and observed HTTP 400 on Fuseki"
+    - "q6 two-variable VALUES with UNDEF and a non-matching row: observed Bob only on Fuseki and RDF4J"
+    - "q7 FILTER with IN joined by ||: predicted and observed Bob and Monica on all seven engines"
+    - "Answered the three-level sign-off on the (UNDEF UNDEF) variation: 5 rows with Bob twice, the two merges written as mappings, and the VALUES-versus-IN design tradeoff"
+  not_completed:
+    - "BIND versus a SELECT (expr AS ?v) expression (plan step 4) was not written or run"
+    - "A UNION of BIND-only branches as the alternative to UNDEF rows (plan step 6) was not written or run"
+    - "Trailing VALUES after the WHERE clause and COALESCE inside BIND (plan step 8, optional) were not covered"
+    - "Fuseki's arq.qparse --print=op algebra was not printed; the algebra for q2 and q4 was derived by hand from §18.2.2.6"
+    - "The (UNDEF UNDEF) sign-off variation was reasoned through and not run"
+  open_questions:
+    - "Why Virtuoso returned 0 rows (rather than rejecting) for q5 was not investigated"
+  notes:
+    - "Primary engine: Apache Jena Fuseki 6.2.0, built from the official jena-fuseki-docker-6.2.0 kit and run in memory with --file; chosen by the plan agent's fresh lookup over Oxigraph because Fuseki keeps non-canonical lexical forms (needed for the term-versus-value contrast) and over RDF4J because RDF4J's explain is unavailable through its server"
+    - "Silent panel: Oxigraph 0.5.13, Eclipse RDF4J 6.1.0 (in-memory repository over REST), QLever (adfreiburg/qlever digest sha256:561498794da4b15392e57d242158de8fc26c13e056ddd23687d699967ec1aaa0), Virtuoso Open Source 7.2.18-dev (named graph urn:assign-bind-values:ds, queried with default-graph-uri), Tentris v1.6.0, MillenniumDB built from repository HEAD 126c387"
+    - "Load checks: Oxigraph, QLever, Virtuoso, Tentris and MillenniumDB stored \"030\"^^xsd:integer as \"30\"; QLever stored integers as xsd:int and \"150\"^^xsd:double as xsd:decimal; MillenniumDB stored Bob's `193.` as the plain string \"193\""
+    - "Panel outcome: q1-q3 Virtuoso returned Bob \"6\"^^xsd:integer (and James \"0\"^^xsd:integer in q1-q2; q3 dropped James since 0 > 0 is false), QLever Monica as xsd:decimal, MillenniumDB Bob unbound (q3 1 row); q4 all agreed except MillenniumDB binding Ben's ?progress to \"3.75E0\"^^xsd:double; q5 all returned HTTP 400 except Virtuoso (HTTP 200, 0 rows), Oxigraph's message being `error at 10:1: expected [_]`; q6 Fuseki and RDF4J 1 row, Oxigraph, QLever, Tentris and MillenniumDB 2 rows (Bob, Monica), Virtuoso 3 rows (Monica twice); q7 all seven agreed on 2 rows"
+    - "Select agent offered: BIND and VALUES: Introducing Bindings Inline (local-engine); DATATYPE() of Language-Tagged Literals (rdf:langString); Named Graphs and Quads: N-Quads and TriG Versus a Single Graph (formats); SPARQL Update: INSERT DATA, DELETE DATA and DELETE/INSERT WHERE (local-engine); Property Paths Beyond + and *: Inverse ^, Alternative | and Optional ? (remote-endpoint); chosen: the first"
+    - "Exercise directory named assign-bind-values after spec chapter 10 (Assignment), opening an assign- prefix"

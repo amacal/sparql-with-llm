@@ -1,0 +1,5 @@
+claim: "A VALUES block is joined by compatibility, which requires the same RDF term (§18.3), so the integer 150 in VALUES does not match a stored \"150\"^^xsd:double; Virtuoso joined them by value"
+status: "observed on Virtuoso Open Source 7.2.18-dev in one sitting: q6 VALUES (?age ?height) { (30 UNDEF) (UNDEF 150) (99 193) } returned 3 rows (Bob, and Monica twice, once via the canonicalized age 30 and once via height 150 against a stored double); no other engine matched the height row"
+evidence:
+  - ".history/2026-11/2026-11-21-bind-and-values-introducing-bindings-inline-local-engine.yml notes (q6)"
+  - "local-engine/assign-bind-values.md Edge cases"

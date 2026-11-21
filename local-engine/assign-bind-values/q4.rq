@@ -1,0 +1,9 @@
+prefix rel: <http://example.com/relationship/>
+
+select ?person ?age ?height ?progress
+where
+{
+    ?person rel:age ?age .
+    bind(?height / ?age as ?progress) .
+    optional { ?person rel:height ?height } .
+}

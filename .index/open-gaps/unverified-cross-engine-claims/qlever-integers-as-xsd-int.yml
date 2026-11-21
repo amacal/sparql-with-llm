@@ -1,5 +1,5 @@
 claim: "QLever stores xsd:integer literals from a loaded dataset as xsd:int and returns COUNT and SUM results as xsd:int, where SPARQL 1.1 gives COUNT the datatype xsd:integer and F&O op:numeric-add(xs:integer, xs:integer) returns xs:integer"
-status: "observed on QLever in five sessions (2026-10-14, 2026-10-17, 2026-10-25 with digest 1ef17d17, 2026-11-03 with digest fa1490b9, 2026-11-14 with digest 565dd62b), images not pinned to the same digest; Oxigraph, Tentris, Fuseki 6.2.0, RDF4J 6.1.0, Virtuoso 7.2.17 and MillenniumDB returned xsd:integer for the same queries"
+status: "observed on QLever in six sessions (2026-10-14, 2026-10-17, 2026-10-25 with digest 1ef17d17, 2026-11-03 with digest fa1490b9, 2026-11-14 with digest 565dd62b, 2026-11-21 with digest 56149879 where it also stored \"150\"^^xsd:double as xsd:decimal), images not pinned to the same digest; Oxigraph, Tentris, Fuseki 6.2.0, RDF4J 6.1.0, Virtuoso 7.2.17 and MillenniumDB returned xsd:integer for the same queries"
 evidence:
   - ".history/2026-10/2026-10-14-distinct-and-duplicate-solutions-after-projection-local-engine.yml notes"
   - ".history/2026-10/2026-10-17-having-filtering-aggregated-groups-local-engine.yml notes"
@@ -8,3 +8,4 @@ evidence:
   - ".history/2026-10/2026-10-25-ask-and-construct-query-forms-beyond-select-local-engine.yml notes"
   - ".history/2026-11/2026-11-03-subqueries-counting-two-multi-valued-properties-without-join-inflation-local-engine.yml notes (digest fa1490b9, subquery COUNT results as xsd:int where Fuseki 6.2.0, Oxigraph 0.5.13, RDF4J 6.1.0, Virtuoso 7.2.17 and Tentris v1.5.0 returned xsd:integer)"
   - ".history/2026-11/2026-11-14-aggregates-beyond-count-sum-avg-min-max-group-concat-and-sample-local-engine.yml notes (digest 565dd62b, SUM of integers \"71\"^^xsd:int in q1 and empty-group COUNT/SUM/AVG as xsd:int in q8)"
+  - ".history/2026-11/2026-11-21-bind-and-values-introducing-bindings-inline-local-engine.yml notes (digest 56149879, stored ages and heights as xsd:int, and Monica's double height as xsd:decimal so double / integer came back xsd:decimal in q1-q3)"
