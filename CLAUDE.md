@@ -185,7 +185,11 @@ Stay on a concept until you can explain it from three levels:
 - **Design rationale** — why the query is shaped this way, what tradeoff it
   represents (a property path over a fixed-depth `UNION` chain, a subquery
   over a `GROUP BY` at the top level, one serialization format over another
-  for a given downstream use).
+  for a given downstream use). The alternative shape a rationale argues
+  against is itself written and run at least once, with its own prediction,
+  whenever it fits the exercise's dataset — a rationale resting on an
+  unconfirmed prediction is exactly where a wrong mental model hides; one
+  argued only in dialogue is recorded as such in `not_completed`.
 
 One query pattern understood at all three levels is worth more than five
 understood only at the first. Do not advance to the next concept until this
@@ -271,9 +275,15 @@ to decide.
 
 There is no dedicated retention-check session or task of any kind — no
 extra `kind`, no standalone sitting, nothing scheduled onto the calendar as
-its own event. A pending check is only ever resolved by organic evidence:
+its own event. Checks are also invisible from your side of the dialogue:
+nothing in a session announces, frames, or flags a question as a retention
+check — a due or failed concept simply appears where the session's own
+material naturally leans on it, asked the same way as any other question,
+so every session keeps moving forward on new material while the record
+quietly accumulates. A check is only ever resolved by organic evidence:
 whenever closing any later session finds that session's own
-`uses_concepts.yml` naming a concept with a pending cold-run, and that
+`uses_concepts.yml` or `prerequisites.yml` naming a concept with a pending
+or failed cold-run, and that
 session applied it correctly and unaided — no hint needed, nothing in its
 own `corrections`/`bugs_found` tied to it — that use *is* the retention
 check, passed. Resolve the cold-run right there, as a small direct edit
@@ -285,13 +295,17 @@ use counts as genuinely fluent) — a concept merely mentioned in passing, or
 only reused with heavy hinting, doesn't qualify as evidence either way, and
 is left pending. If instead a later session shows the concept used
 incorrectly, or only recovered with a hint, that's a real failure, not
-silence — record it the same way (see below).
+silence — record it the same way (see below). The same holds for a
+foundational concept that has no cold-run at all: a later session that
+visibly uses it incorrectly or only with a hint opens a new cold-run for it
+directly at `status: failed`, so a recurring misconception gets tracked
+instead of being re-corrected session after session unnoticed.
 
 Because nothing resolves a due concept except a session that happens to
 need it, topic selection (see "Session selection") weighs due concepts
 directly when choosing what's next: among otherwise-comparable candidates,
-prefer one that would naturally put a concept with a pending cold-run to
-use again — as a prerequisite, a point of comparison, or a building
+prefer one that would naturally put a concept with a due pending or a
+failed cold-run to use again — as a prerequisite, a point of comparison, or a building
 block — over an equally-good one that wouldn't, so the concept gets a real
 chance to be exercised again soon rather than only by luck. Checks on
 closely-linked concepts still share one due date, scheduled together at
@@ -307,8 +321,13 @@ Passing updates that concept's `.index/sessions/<slug>/meta.yml` `status`
 field from `demonstrated` to `retained` (see "Fast index"). A concept that
 instead comes back wrong doesn't just quietly expire — mark the cold-run
 `status: failed` with `result` stating which session and what went wrong,
-and that feeds back into session selection as a priority candidate for a
-real new exercise, the same weight as an open gap. Every outcome is
+and that feeds back into session selection with the same weight as an open
+gap — weighed the same organic way as a due one, as a strong preference for
+a real next topic that leans on the concept again, never as a dedicated
+repair session. A failed check is not terminal: a later session that
+applies the concept correctly and unaided flips it to `status: passed`,
+appending (never overwriting) that session's evidence to `result`, and
+promotes the concept to `retained` like any other pass. Every outcome is
 recorded in `.index/cold-runs/<slug>.yml`'s `result` field — a retention
 check is never silently dropped once due, and never silently resolved
 without stating why.
@@ -553,8 +572,8 @@ this repo's own sessions only (see "Fast index").
   except a missing-prerequisite stepping-stone toward a named future
   target — name the larger target and why the intermediate is the right
   entry point.
-- When a concept has a due, still-pending retention check (see "Retention
-  checks"), prefer a candidate that would naturally put it to use again —
+- When a concept has a due, still-pending or a failed retention check (see
+  "Retention checks"), prefer a candidate that would naturally put it to use again —
   as a prerequisite, a point of comparison, or a building block — over an
   otherwise equally-good candidate that wouldn't, so it gets a real chance
   to be exercised again soon. State this explicitly when it's a factor in
@@ -951,8 +970,9 @@ script** (see "Fast index (`.index/`)"): `Write` the new session's
 directory, `Write`/`rm` any future-target files it affects, `Edit` a branch
 file only if this session extends or opens it, revise an older session's
 fields only when specifically warranted — and, if this session's own
-`uses_concepts.yml` names a concept with a pending retention check, credit
-or fail that organic evidence in the same pass (see "Retention checks").
+`uses_concepts.yml` or `prerequisites.yml` names a concept with a pending
+or failed retention check, credit or fail that organic evidence in the same
+pass (see "Retention checks").
 
 Two sequential agent calls:
 1. **Write agent** (fork, `.skills/session-close.md`) — writes the notes

@@ -162,10 +162,14 @@ directory_layout:
       dedicated retention-check session or task — checked by session-select at the start
       of every session thereafter only to weigh candidate topics (see CLAUDE.md's
       'Retention checks' and 'Session selection'), any with due_date <= today and
-      status: pending named so a candidate that would naturally exercise it again can be
-      preferred, never surfaced as a task of its own. Resolved only as a side effect of
-      whichever later session's own close organically exercised the concept: status edited
-      to passed or failed and result filled in that session's own close — never deleted
+      status: pending, and any with status: failed, named so a candidate that would
+      naturally exercise it again can be preferred, never surfaced as a task of its own.
+      Resolved only as a side effect of whichever later session's own close organically
+      exercised the concept (via its uses_concepts.yml or prerequisites.yml): status edited
+      to passed or failed and result filled in that session's own close. failed is not
+      terminal — a later correct, unaided use flips it to passed, its evidence line appended
+      after the failure line. A foundational concept with no check that a session visibly
+      gets wrong gets a new file written directly at status: failed. Never deleted
       afterward, unlike future-targets: a resolved check is itself the permanent evidence
       record this whole mechanism exists to produce. On passed, the concept's own
       sessions/<slug>/meta.yml status field is promoted from demonstrated to retained in
@@ -237,7 +241,7 @@ computed_queries:
   by_date: 'grep -l "date: \"<YYYY-MM-DD>\"" .index/sessions/*/meta.yml'
   future_targets_list: "ls .index/future-targets/"
   branch_membership: 'grep -l "<exact Concept Title>" .index/branches/*.yml'
-  cold_runs_due: "grep -l 'status: pending' .index/cold-runs/*.yml 2>/dev/null, then check each one's due_date against today — run at the start of every session-select, per CLAUDE.md's 'Retention checks'"
+  cold_runs_due: "grep -l 'status: pending' .index/cold-runs/*.yml 2>/dev/null, then check each one's due_date against today; plus grep -l 'status: failed' .index/cold-runs/*.yml (failed checks are always live, regardless of date) — run at the start of every session-select, per CLAUDE.md's 'Retention checks'"
   status_lookup: "grep -h '^status:' .index/sessions/*/meta.yml | sort | uniq -c   (demonstrated vs. retained counts — how much of the done-set has actually survived a retention check)"
 
 # ---------------------------------------------------------------------------
