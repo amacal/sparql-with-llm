@@ -247,7 +247,9 @@ computed_queries:
 # ---------------------------------------------------------------------------
 # validation: no script (deliberate choice — see CLAUDE.md's Tooling section for why).
 # An agent runs these checks directly with Grep/Glob as part of closing/verifying a
-# session. Each check below is phrased as something a Grep/Glob call can answer directly.
+# session. Each check below is phrased as something a Grep/Glob call can answer directly,
+# except the YAML well-formedness check, which no Grep can answer and is therefore the one
+# documented read-only parse command (it only reads; it never writes or reformats a file).
 # ---------------------------------------------------------------------------
 validation:
   checks:
@@ -260,6 +262,7 @@ validation:
     - "every concepts.yml/capabilities.yml tag matches ^[a-z0-9]+(-[a-z0-9]+)*$"
     - "meta.yml's target field is one of the enum currently listed above, and matches the target implied by the file field's directory prefix"
     - "meta.yml's status field is exactly demonstrated or retained; retained only ever set as the direct result of a cold-runs/<slug>.yml resolving to status: passed for that exact title"
+    - "every YAML file written or edited this session (.history entry, sessions/<slug>/*.yml, any cold-run, open-gap, branch or future-target file) loads under a standard YAML parser — one read-only command over exactly those paths, e.g. python3 -I -c 'import sys,yaml; [yaml.safe_load(open(p)) for p in sys.argv[1:]]' <paths>, its output quoted in the report; a parse failure is fixed with Edit, never by letting the command rewrite the file"
     - "every cold-runs/<slug>.yml's concept field resolves to a real sessions/*/meta.yml title"
     - "no cold-runs/<slug>.yml is ever deleted — status pending/passed/failed are the only transitions, never a removed file"
     - "every cross_repo_links.yml entry's repo/title pair, if independently re-checked, is plausible against that sibling's own current .index/ (spot-check, not exhaustive) — evidence_status_there is never a guess"
